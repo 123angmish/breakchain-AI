@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Closure Letter & Quote Generator – BreakChain AI</title>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    .closure-container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .generator-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid #f3e5f5;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      text-align: left;
+    }
+
+    .field-group label {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #4a148c;
+    }
+
+    .field-group input, .field-group select, .field-group textarea {
+      padding: 12px 16px;
+      border: 1.5px solid #e1bee7;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .field-group input:focus, .field-group select:focus, .field-group textarea:focus {
+      border-color: var(--primary);
+    }
+
+    /* Output Letter Card */
+    #letterOutput {
+      display: none;
+      margin-top: 30px;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .letter-paper {
+      background: #fffcf8;
+      border: 1.5px solid #f1dec9;
+      border-radius: var(--radius-md);
+      padding: 36px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+      position: relative;
+      color: #2d3748;
+      line-height: 1.8;
+      font-size: 15.5px;
+    }
+
+    .quote-box {
+      background: linear-gradient(135deg, #fdf0fa, #f3e5f5);
+      border-left: 4px solid var(--primary);
+      padding: 16px 20px;
+      border-radius: var(--radius-sm);
+      font-style: italic;
+      font-weight: 600;
+      color: #6a1b9a;
+      margin-bottom: 24px;
+      font-size: 17px;
+    }
+
+    .letter-text {
+      white-space: pre-wrap;
+      font-family: 'Georgia', serif;
+    }
+
+    .letter-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    @media(max-width: 700px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="bc-header">
+    <h1>💔 BreakChain AI</h1>
+  </header>
+
+  <nav class="bc-nav">
+    <div class="bc-nav-links">
+      <a href="index.html">🏠 Home</a>
+      <a href="soulbot.html">🧠 SoulBot AI</a>
+      <a href="chat.html">🔬 Chat Autopsy</a>
+      <a href="close.html" class="active">✉️ Closure AI</a>
+      <a href="diary.html">📝 Voice Diary</a>
+      <a href="games.html">🎮 Healing Games</a>
+      <a href="roadmap.html">🧭 Roadmap</a>
+    </div>
+    <div class="bc-nav-user">
+      <a href="index.html" class="bc-btn-sm">← Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="closure-container">
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="font-size: 36px; color: #3b1145; font-weight: 800;">✉️ AI Breakup Closure Studio</h1>
+      <p style="color: #666; font-size: 16px;">True closure comes from within. Generate dignified, empowering letters and final statements to set your soul free.</p>
+    </div>
+
+    <div class="generator-card">
+      <div class="form-grid">
+        <div class="field-group">
+          <label>Recipient Name or Pronoun:</label>
+          <input type="text" id="exName" placeholder="e.g. Alex / My Ex" value="You" />
+        </div>
+        <div class="field-group">
+          <label>Relationship Duration:</label>
+          <input type="text" id="duration" placeholder="e.g. 2 years / 8 months" value="1 year" />
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="field-group">
+          <label>Primary Breakup Reason / Core Issue:</label>
+          <select id="reason">
+            <option value="drifting apart and emotional distance">Drifting Apart & Emotional Distance</option>
+            <option value="betrayal, broken trust and cheating">Broken Trust / Infidelity</option>
+            <option value="toxic arguments, manipulation and lack of peace">Toxicity & Emotional Drain</option>
+            <option value="unrequited love and one-sided effort">One-Sided Effort & Neglect</option>
+            <option value="incompatibility, values mismatch and future plans">Incompatible Life Visions</option>
+            <option value="sudden ghosting and lack of respect">Ghosting & Abrupt Ending</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>Desired Tone for Closure:</label>
+          <select id="tone">
+            <option value="peaceful">🕊️ Dignified, Peaceful & Forgiving</option>
+            <option value="firm">🛑 Firm Boundary & Absolute No-Contact</option>
+            <option value="empowered">👑 Rebirth, Self-Love & Reclaiming Power</option>
+            <option value="unsent">❤️ Unsent Raw Heartfelt Catharsis</option>
+            <option value="gratitude">🌱 Gratitude & Mutual Release</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-group" style="margin-bottom: 24px;">
+        <label>Any specific unsaid feelings you want included? (Optional):</label>
+        <textarea id="customThoughts" rows="2" placeholder="e.g. I gave everything I could, but I realized I was losing myself in the process..."></textarea>
+      </div>
+
+      <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+        <button class="bc-btn" style="flex: 2;" onclick="generateAIClosure()">
+          ✨ Generate Custom AI Closure Letter
+        </button>
+        <button class="bc-btn bc-btn-secondary" style="flex: 1;" onclick="instantQuote()">
+          🎲 Quick 1-Liner Quote
+        </button>
+      </div>
+    </div>
+
+    <!-- Output Section -->
+    <div id="letterOutput">
+      <div class="letter-paper">
+        <div class="quote-box" id="quoteResult"></div>
+        <div class="letter-text" id="letterResult"></div>
+
+        <div class="letter-actions">
+          <button class="bc-btn-sm" onclick="copyLetter()">📋 Copy Letter</button>
+          <button class="bc-btn-sm" onclick="readLetterAloud()">🔊 Listen Aloud</button>
+          <button class="bc-btn-sm" style="background:#4a5568;" onclick="downloadLetterText()">📥 Download as Text</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bc-footer">
+    <p>© 2025–2026 BreakChain AI. Release what was, welcome what will be.</p>
+  </footer>
+
+  <script src="soulbot-widget.js"></script>
+  <script>
+    const quickQuotes = [
+      "I’m letting you go, not because I stopped loving you, but because I started loving myself more.",
+      "Our story mattered, but it ends here — with grace, not hatred.",
+      "You were a lesson, not a lifetime.",
+      "I forgive you. I forgive me. And I choose peace.",
+      "Goodbye doesn’t mean I hate you. It means I’m healing.",
+      "We lost something beautiful, but I’m choosing to find myself again.",
+      "Thank you for the memories — I release you now.",
+      "Not every love is meant to last. Some just teach us how to grow.",
+      "This is my closure, not revenge. I’m moving on.",
+      "We’re done, and that’s okay. I’m not broken, just reborn."
+    ];
+
+    function instantQuote() {
+      const output = document.getElementById('letterOutput');
+      output.style.display = 'block';
+      output.scrollIntoView({ behavior: 'smooth' });
+
+      const q = quickQuotes[Math.floor(Math.random() * quickQuotes.length)];
+      document.getElementById('quoteResult').innerText = `"${q}"`;
+      document.getElementById('letterResult').innerText = `✨ Keep this quote close to your heart today. Whenever you feel tempted to look back, repeat this mantra to yourself.`;
+    }
+
+    async function generateAIClosure() {
+      const exName = document.getElementById('exName').value.trim() || 'You';
+      const duration = document.getElementById('duration').value.trim() || '1 year';
+      const reason = document.getElementById('reason').value;
+      const tone = document.getElementById('tone').value;
+      const customThoughts = document.getElementById('customThoughts').value.trim();
+
+      const output = document.getElementById('letterOutput');
+      output.style.display = 'block';
+      output.scrollIntoView({ behavior: 'smooth' });
+
+      document.getElementById('quoteResult').innerText = "Generating your personalized closure with AI...";
+      document.getElementById('letterResult').innerText = "Crafting words of healing and dignified release...";
+
+      try {
+        const res = await fetch('/api/closure', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ exName, duration, reason, tone, customThoughts })
+        });
+        const data = await res.json();
+
+        document.getElementById('quoteResult').innerText = `"${data.oneLiner}"`;
+        document.getElementById('letterResult').innerText = data.letter;
+      } catch (err) {
+        instantQuote();
+      }
+    }
+
+    function copyLetter() {
+      const q = document.getElementById('quoteResult').innerText;
+      const l = document.getElementById('letterResult').innerText;
+      navigator.clipboard.writeText(`${q}\n\n${l}`);
+      alert("📋 Closure letter copied to clipboard!");
+    }
+
+    function readLetterAloud() {
+      const text = document.getElementById('letterResult').innerText;
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utt = new SpeechSynthesisUtterance(text);
+        utt.rate = 0.95;
+        window.speechSynthesis.speak(utt);
+      }
+    }
+
+    function downloadLetterText() {
+      const text = `${document.getElementById('quoteResult').innerText}\n\n${document.getElementById('letterResult').innerText}`;
+      const blob = new Blob([text], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `BreakChain-Closure-Letter-${Date.now()}.txt`;
+      a.click();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Chat Autopsy – BreakChain AI</title>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    .autopsy-container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .autopsy-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .autopsy-header h1 {
+      font-size: 36px;
+      color: #3b1145;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .autopsy-header p {
+      color: #615566;
+      font-size: 16px;
+    }
+
+    .input-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 30px;
+      border: 1px solid #f3e5f5;
+    }
+
+    .dropzone {
+      border: 2px dashed #ce93d8;
+      border-radius: var(--radius-md);
+      padding: 30px;
+      text-align: center;
+      background: #fdfafc;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 20px;
+    }
+
+    .dropzone:hover {
+      border-color: var(--primary);
+      background: #fce4ec;
+    }
+
+    textarea {
+      width: 100%;
+      height: 140px;
+      padding: 14px;
+      border: 1.5px solid #e1bee7;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14px;
+      resize: vertical;
+      margin-bottom: 16px;
+    }
+
+    .sample-btn {
+      background: #f3e5f5;
+      color: #7b1fa2;
+      border: 1px solid #ce93d8;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    /* Results UI */
+    #autopsyResult {
+      display: none;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .metric-card {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid #f0e6f2;
+    }
+
+    .metric-val {
+      font-size: 32px;
+      font-weight: 800;
+      margin-top: 4px;
+    }
+
+    .metric-label {
+      font-size: 13px;
+      color: #718096;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .diagnosis-box {
+      background: linear-gradient(135deg, #fff0f5, #f3e5f5);
+      border-left: 6px solid #d81b60;
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .diagnosis-box h3 {
+      color: #880e4f;
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+
+    .flagged-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .flag-item {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      box-shadow: var(--shadow-sm);
+      border-left: 5px solid #e53e3e;
+    }
+
+    .flag-badge {
+      display: inline-block;
+      background: #fed7d7;
+      color: #9b2c2c;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      margin-bottom: 6px;
+    }
+
+    .flag-quote {
+      font-style: italic;
+      color: #2d3748;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .flag-expl {
+      font-size: 13px;
+      color: #718096;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="bc-header">
+    <h1>💔 BreakChain AI</h1>
+  </header>
+
+  <nav class="bc-nav">
+    <div class="bc-nav-links">
+      <a href="index.html">🏠 Home</a>
+      <a href="soulbot.html">🧠 SoulBot AI</a>
+      <a href="chat.html" class="active">🔬 Chat Autopsy</a>
+      <a href="close.html">✉️ Closure AI</a>
+      <a href="diary.html">📝 Voice Diary</a>
+      <a href="games.html">🎮 Healing Games</a>
+      <a href="roadmap.html">🧭 Roadmap</a>
+    </div>
+    <div class="bc-nav-user">
+      <a href="index.html" class="bc-btn-sm">← Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="autopsy-container">
+    <div class="autopsy-header">
+      <h1>🔬 AI Chat Autopsy & Toxicity Scanner</h1>
+      <p>Uncover hidden manipulation, gaslighting, emotional imbalance, and get psychological clarity on what really happened.</p>
+    </div>
+
+    <div class="input-card">
+      <div class="dropzone" onclick="document.getElementById('fileUpload').click()">
+        <div style="font-size: 36px; margin-bottom: 8px;">📂</div>
+        <strong>Click or Drag & Drop WhatsApp Export (.txt)</strong>
+        <p style="font-size: 13px; color: #888; margin-top: 4px;">WhatsApp > More > Export Chat > Without Media</p>
+        <input type="file" id="fileUpload" accept=".txt" style="display:none;" onchange="handleFile(event)" />
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <label style="font-weight: 700; color: #4a148c; font-size: 14px;">Or Paste Chat Messages Below:</label>
+        <button class="sample-btn" onclick="loadSampleChat()">⚡ Load Sample Manipulative Chat</button>
+      </div>
+
+      <textarea id="chatInput" placeholder="Paste chat excerpt here (e.g. &#10;Ex: You're overreacting as always&#10;Me: I just wanted to talk&#10;Ex: If you loved me you wouldn't ask)"></textarea>
+
+      <button class="bc-btn" style="width: 100%;" onclick="runAutopsy()">
+        🔍 Run Deep AI Autopsy
+      </button>
+    </div>
+
+    <!-- Autopsy Results -->
+    <div id="autopsyResult">
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Toxicity Index</div>
+          <div class="metric-val" id="toxicScore" style="color: #e53e3e;">0%</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Communication Health</div>
+          <div class="metric-val" id="healthScore" style="color: #3182ce;">0%</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Red Flags Detected</div>
+          <div class="metric-val" id="flagCount" style="color: #d69e2e;">0</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Empathy Index</div>
+          <div class="metric-val" id="empathyScore" style="color: #38a169;">0%</div>
+        </div>
+      </div>
+
+      <div class="diagnosis-box">
+        <h3 id="diagTitle">Clinical Assessment</h3>
+        <p id="diagSummary" style="margin-bottom: 12px; color: #4a5568;"></p>
+        <div style="background: white; padding: 14px; border-radius: var(--radius-sm); border: 1px solid #f8bbd0;">
+          <strong>💡 AI Healing Clarity:</strong>
+          <p id="healingTakeaway" style="margin-top: 4px; color: #6a1b9a;"></p>
+        </div>
+      </div>
+
+      <h3 style="color: #2c0b30; margin-bottom: 16px; font-size: 20px;">🚩 Highlighted Toxic Patterns & Quotes:</h3>
+      <div class="flagged-list" id="flaggedContainer">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <footer class="bc-footer">
+    <p>© 2025–2026 BreakChain AI. Psychological Insights & Recovery.</p>
+  </footer>
+
+  <script src="soulbot-widget.js"></script>
+  <script>
+    function handleFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        document.getElementById('chatInput').value = event.target.result;
+        runAutopsy();
+      };
+      reader.readAsText(file);
+    }
+
+    function loadSampleChat() {
+      const sample = `12/05/2024, 10:15 pm - Alex: Why are you making such a big deal about this?
+12/05/2024, 10:16 pm - You: You didn't reply for 3 days after telling me we'd meet.
+12/05/2024, 10:17 pm - Alex: You are crazy and paranoid. I never said Friday.
+12/05/2024, 10:18 pm - You: You literally texted it to me.
+12/05/2024, 10:19 pm - Alex: If you really loved me you wouldn't interrogate me. You ruin everything.
+12/05/2024, 10:20 pm - You: I'm just hurt and crying.
+12/05/2024, 10:21 pm - Alex: Stop crying and get over it. Don't talk to me. Bye forever.`;
+      document.getElementById('chatInput').value = sample;
+    }
+
+    async function runAutopsy() {
+      const text = document.getElementById('chatInput').value.trim();
+      if (!text) {
+        alert("Please paste chat text or upload a chat file first.");
+        return;
+      }
+
+      const resBox = document.getElementById('autopsyResult');
+      resBox.style.display = 'block';
+      resBox.scrollIntoView({ behavior: 'smooth' });
+
+      document.getElementById('diagTitle').innerText = "Analyzing chat patterns...";
+      document.getElementById('diagSummary').innerText = "Running NLP emotion and gaslighting scan...";
+
+      try {
+        const res = await fetch('/api/autopsy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chatText: text })
+        });
+        const data = await res.json();
+
+        document.getElementById('toxicScore').innerText = `${data.toxicityScore}%`;
+        document.getElementById('healthScore').innerText = `${data.communicationHealth}%`;
+        document.getElementById('flagCount').innerText = data.flaggedCount;
+        document.getElementById('empathyScore').innerText = `${data.empathyScore}%`;
+
+        document.getElementById('diagTitle').innerText = `Diagnosis: ${data.diagnosis}`;
+        document.getElementById('diagSummary').innerText = data.diagnosisSummary;
+        document.getElementById('healingTakeaway').innerText = data.healingTakeaway;
+
+        const container = document.getElementById('flaggedContainer');
+        if (data.flaggedMessages && data.flaggedMessages.length > 0) {
+          container.innerHTML = data.flaggedMessages.map(f => `
+            <div class="flag-item">
+              <span class="flag-badge">🚩 ${f.flag}</span>
+              <div class="flag-quote">"${f.message}"</div>
+              <div class="flag-expl">🧠 <strong>Psychological Analysis:</strong> ${f.explanation} (Sender: <em>${f.sender}</em>)</div>
+            </div>
+          `).join('');
+        } else {
+          container.innerHTML = `
+            <div style="background:white; padding:20px; border-radius:12px; text-align:center; color:#38a169; font-weight:600;">
+              ✅ No critical manipulation or gaslighting red flags detected in this excerpt.
+            </div>
+          `;
+        }
+      } catch (err) {
+        alert("Autopsy analysis failed. Please ensure server is running.");
+      }
+    }
+  </script>
+</body>
+</html>

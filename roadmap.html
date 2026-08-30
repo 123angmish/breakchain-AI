@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recovery Roadmap – BreakChain AI</title>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    .roadmap-container {
+      max-width: 950px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .wizard-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid #f3e5f5;
+      margin-bottom: 30px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #4a148c;
+      margin-bottom: 6px;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid #e1bee7;
+      font-family: inherit;
+      font-size: 14.5px;
+      outline: none;
+    }
+
+    /* Progress bar */
+    .progress-section {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 20px 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 30px;
+    }
+
+    .progress-bar-bg {
+      height: 14px;
+      background: #f0e6f2;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(135deg, #a23cad, #e91e63);
+      border-radius: 20px;
+      transition: width 0.4s ease;
+    }
+
+    /* Roadmap Timeline */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .phase-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid #f0e6f2;
+      border-left: 6px solid var(--primary);
+    }
+
+    .phase-card.p1 { border-left-color: #e91e63; }
+    .phase-card.p2 { border-left-color: #9c27b0; }
+    .phase-card.p3 { border-left-color: #3f51b5; }
+    .phase-card.p4 { border-left-color: #4caf50; }
+
+    .phase-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .phase-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #2c0b30;
+    }
+
+    .phase-days {
+      background: #fdf0fa;
+      color: #8e24aa;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    .phase-objective {
+      font-size: 14.5px;
+      color: #555;
+      margin-bottom: 16px;
+      font-style: italic;
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: #2d3748;
+      cursor: pointer;
+    }
+
+    .task-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    @media(max-width: 700px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="bc-header">
+    <h1>💔 BreakChain AI</h1>
+  </header>
+
+  <nav class="bc-nav">
+    <div class="bc-nav-links">
+      <a href="index.html">🏠 Home</a>
+      <a href="soulbot.html">🧠 SoulBot AI</a>
+      <a href="chat.html">🔬 Chat Autopsy</a>
+      <a href="close.html">✉️ Closure AI</a>
+      <a href="diary.html">📝 Voice Diary</a>
+      <a href="games.html">🎮 Healing Games</a>
+      <a href="roadmap.html" class="active">🧭 Roadmap</a>
+    </div>
+    <div class="bc-nav-user">
+      <a href="index.html" class="bc-btn-sm">← Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="roadmap-container">
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="font-size: 36px; color: #3b1145; font-weight: 800;">🧭 Personalized Recovery Roadmap</h1>
+      <p style="color: #666; font-size: 16px;">A structured, psychology-backed milestone journey designed to guide your heart from acute grief to emotional freedom.</p>
+    </div>
+
+    <!-- Assessment Wizard -->
+    <div class="wizard-card">
+      <h3 style="color: var(--primary); margin-bottom: 16px;">Customize Your Recovery Path</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>1. Type of Breakup:</label>
+          <select id="bType">
+            <option value="Cheating & Betrayal">Cheating & Broken Trust</option>
+            <option value="Toxic & High Conflict">Toxic Dynamic / Manipulation</option>
+            <option value="Mutual & Drifting Apart">Mutual Separation / Grown Apart</option>
+            <option value="One-Sided / Abandoned">One-Sided Walkaway / Ghosting</option>
+            <option value="Family / Cultural Pressure">Family Pressure / Circumstantial</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>2. Relationship Duration:</label>
+          <select id="bDuration">
+            <option value="Less than 6 months">Under 6 Months</option>
+            <option value="6 to 12 months">6 – 12 Months</option>
+            <option value="1 to 3 years" selected>1 – 3 Years</option>
+            <option value="3+ years">3+ Years</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>3. Attachment Level:</label>
+          <select id="bAttachment">
+            <option value="Deep & Intense">Extremely Deep / Lived Together</option>
+            <option value="Moderate">Moderate Connection</option>
+            <option value="Casual">Casual / Emerging</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>4. Primary Goal Right Now:</label>
+          <select id="bGoal">
+            <option value="Move on & Rebuild Self">Move On & Completely Reclaim My Life</option>
+            <option value="Find Closure & Peace">Find Peace & Release Resentment</option>
+            <option value="Stop Overthinking & Crying">Stop Overthinking & Night Loneliness</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="bc-btn" style="width: 100%;" onclick="generateRoadmap()">
+        🚀 Generate My Custom Recovery Timeline
+      </button>
+    </div>
+
+    <!-- Live Progress Bar -->
+    <div class="progress-section" id="progressSection">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-weight: 700; color: #2c0b30;">🎯 Your Recovery Progress: <span id="progressPercent">0%</span></span>
+        <span id="completedCount" style="font-size: 13px; color: #8e24aa; font-weight: 600;">0 / 20 Milestones Completed</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <!-- Timeline Phases -->
+    <div class="timeline" id="timelineContainer">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+
+  <footer class="bc-footer">
+    <p>© 2025–2026 BreakChain AI. Healing is a journey, one milestone at a time.</p>
+  </footer>
+
+  <script src="soulbot-widget.js"></script>
+  <script>
+    async function generateRoadmap() {
+      const type = document.getElementById('bType').value;
+      const duration = document.getElementById('bDuration').value;
+      const attachment = document.getElementById('bAttachment').value;
+      const goal = document.getElementById('bGoal').value;
+
+      try {
+        const res = await fetch('/api/roadmap', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type, duration, attachment, goal })
+        });
+        const data = await res.json();
+        renderRoadmap(data.phases);
+      } catch (err) {
+        // Local render
+        renderDefaultPhases();
+      }
+    }
+
+    function renderRoadmap(phases) {
+      const container = document.getElementById('timelineContainer');
+      container.innerHTML = "";
+
+      const savedChecks = JSON.parse(localStorage.getItem("roadmap_checks") || "{}");
+
+      phases.forEach((p, pIdx) => {
+        const card = document.createElement('div');
+        card.className = `phase-card p${pIdx + 1}`;
+        card.innerHTML = `
+          <div class="phase-header">
+            <div class="phase-title">${p.phase}</div>
+            <div class="phase-days">📅 ${p.days}</div>
+          </div>
+          <div class="phase-objective">💡 <strong>Objective:</strong> ${p.objective}</div>
+          <div class="task-list">
+            ${p.tasks.map((task, tIdx) => {
+              const taskId = `task_${pIdx}_${tIdx}`;
+              const isChecked = savedChecks[taskId] ? 'checked' : '';
+              return `
+                <label class="task-item">
+                  <input type="checkbox" id="${taskId}" ${isChecked} onchange="toggleTask('${taskId}')" />
+                  <span>${task}</span>
+                </label>
+              `;
+            }).join('')}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      updateProgress();
+    }
+
+    function toggleTask(taskId) {
+      const savedChecks = JSON.parse(localStorage.getItem("roadmap_checks") || "{}");
+      const checkbox = document.getElementById(taskId);
+      if (checkbox.checked) {
+        savedChecks[taskId] = true;
+      } else {
+        delete savedChecks[taskId];
+      }
+      localStorage.setItem("roadmap_checks", JSON.stringify(savedChecks));
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const checkboxes = document.querySelectorAll('#timelineContainer input[type="checkbox"]');
+      const total = checkboxes.length;
+      if (total === 0) return;
+
+      const checked = Array.from(checkboxes).filter(c => c.checked).length;
+      const pct = Math.round((checked / total) * 100);
+
+      document.getElementById('progressFill').style.width = `${pct}%`;
+      document.getElementById('progressPercent').innerText = `${pct}%`;
+      document.getElementById('completedCount').innerText = `${checked} / ${total} Milestones Completed`;
+
+      if (pct === 100) {
+        alert("🏆 CONGRATULATIONS! You have completed all phases of your Recovery Roadmap! You are ready to claim your Healing Champion Badge!");
+      }
+    }
+
+    window.onload = generateRoadmap;
+  </script>
+</body>
+</html>

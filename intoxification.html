@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Habit & Craving De-escalation – BreakChain AI</title>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    .habit-container {
+      max-width: 850px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+
+    .habit-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid #f3e5f5;
+      margin-bottom: 30px;
+    }
+
+    .habit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .habit-btn {
+      background: #fdf0fa;
+      border: 2px solid #f8bbd0;
+      border-radius: var(--radius-md);
+      padding: 18px 12px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #7b1fa2;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .habit-btn:hover, .habit-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Urge Surfing Timer */
+    .timer-card {
+      background: linear-gradient(135deg, #fce4ec, #ede7f6);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      margin-top: 24px;
+    }
+
+    .timer-display {
+      font-size: 54px;
+      font-weight: 800;
+      color: #880e4f;
+      letter-spacing: 2px;
+      margin: 14px 0;
+    }
+
+    /* Rescue Response */
+    #rescueArea {
+      display: none;
+      animation: fadeIn 0.4s ease-out;
+      text-align: left;
+    }
+
+    .rescue-box {
+      background: #fff;
+      border-left: 6px solid #e91e63;
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      margin-top: 20px;
+    }
+
+    .grounding-step {
+      background: #fdfafc;
+      border: 1px solid #f3e5f5;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="bc-header">
+    <h1>💔 BreakChain AI</h1>
+  </header>
+
+  <nav class="bc-nav">
+    <div class="bc-nav-links">
+      <a href="index.html">🏠 Home</a>
+      <a href="soulbot.html">🧠 SoulBot AI</a>
+      <a href="chat.html">🔬 Chat Autopsy</a>
+      <a href="close.html">✉️ Closure AI</a>
+      <a href="diary.html">📝 Voice Diary</a>
+      <a href="intoxification.html" class="active">🚭 Habit Healer</a>
+      <a href="games.html">🎮 Healing Games</a>
+      <a href="roadmap.html">🧭 Roadmap</a>
+    </div>
+    <div class="bc-nav-user">
+      <a href="index.html" class="bc-btn-sm">← Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="habit-container">
+    <div style="margin-bottom: 30px;">
+      <h1 style="font-size: 36px; color: #3b1145; font-weight: 800;">🚭 Habit Breaker & Urge Rescue</h1>
+      <p style="color: #666; font-size: 16px;">Don't let temporary heartbreak destroy your body or self-respect. Resist the impulse with psychological urge surfing.</p>
+    </div>
+
+    <div class="habit-card">
+      <h2 style="font-size: 20px; color: #4a148c;">What destructive impulse are you trying to resist right now?</h2>
+
+      <div class="habit-grid">
+        <button class="habit-btn" onclick="selectImpulse('Smoking', '🚬')">
+          <span style="font-size: 28px;">🚬</span> Smoking / Vape
+        </button>
+        <button class="habit-btn" onclick="selectImpulse('Alcohol', '🍷')">
+          <span style="font-size: 28px;">🍷</span> Alcohol / Binging
+        </button>
+        <button class="habit-btn" onclick="selectImpulse('Contact-Ex', '📱')">
+          <span style="font-size: 28px;">📱</span> Calling / Texting Ex
+        </button>
+        <button class="habit-btn" onclick="selectImpulse('Drugs', '💊')">
+          <span style="font-size: 28px;">💊</span> Substances / Pills
+        </button>
+        <button class="habit-btn" onclick="selectImpulse('Self-Harm', '💔')">
+          <span style="font-size: 28px;">💔</span> Self-Harm Urge
+        </button>
+      </div>
+
+      <!-- Urge Surfing Timer -->
+      <div class="timer-card">
+        <h3 style="color: #4a148c;">🌊 15-Minute "Urge Surfing" Challenge</h3>
+        <p style="font-size: 13.5px; color: #666;">Psychology proves acute cravings peak in 3 minutes and dissolve within 15 minutes. Ride the wave without acting.</p>
+
+        <div class="timer-display" id="timerDisplay">15:00</div>
+
+        <div style="display: flex; justify-content: center; gap: 10px;">
+          <button class="bc-btn" id="startTimerBtn" onclick="startUrgeTimer()">🏄 Start Urge Surfing</button>
+          <button class="bc-btn bc-btn-secondary" onclick="resetUrgeTimer()">🔄 Reset</button>
+        </div>
+      </div>
+
+      <!-- Live AI Rescue Guidance -->
+      <div id="rescueArea">
+        <div class="rescue-box">
+          <h3 id="rescueTitle" style="color: #880e4f; margin-bottom: 8px;"></h3>
+          <p id="rescueTalkDown" style="font-size: 15px; color: #2d3748; line-height: 1.6; margin-bottom: 16px;"></p>
+
+          <div style="background: #faf5fa; padding: 14px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #f8bbd0;">
+            <strong style="color: #9c27b0;">✨ Mental Anchor Mantra:</strong>
+            <p id="rescueMantra" style="color: #c2185b; font-weight: 700; margin-top: 4px; font-size: 16px;"></p>
+          </div>
+
+          <h4 style="color: #4a148c; margin-bottom: 8px;">🧘 5-4-3-2-1 Sensory Grounding Technique:</h4>
+          <div class="grounding-step">👀 <strong>5:</strong> Look around and name 5 things you can physically see.</div>
+          <div class="grounding-step">✋ <strong>4:</strong> Touch and feel 4 distinct textures (your clothes, chair, desk, hair).</div>
+          <div class="grounding-step">👂 <strong>3:</strong> Listen carefully for 3 distinct sounds around you.</div>
+          <div class="grounding-step">👃 <strong>2:</strong> Notice 2 smells in the room or take 2 deep breaths.</div>
+          <div class="grounding-step">👅 <strong>1:</strong> Take a sip of cold water and notice 1 physical sensation.</div>
+
+          <button class="bc-btn" style="width: 100%; margin-top: 16px;" onclick="claimCravingVictory()">
+            🏆 I Survived This Urge & Stayed Strong!
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bc-footer">
+    <p>© 2025–2026 BreakChain AI. You are stronger than your temporary impulses.</p>
+  </footer>
+
+  <script src="soulbot-widget.js"></script>
+  <script>
+    let timerInterval = null;
+    let secondsLeft = 15 * 60;
+    let selectedHabit = "Smoking";
+
+    async function selectImpulse(habit, emoji) {
+      selectedHabit = habit;
+      document.querySelectorAll('.habit-btn').forEach(b => b.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      const rescue = document.getElementById('rescueArea');
+      rescue.style.display = 'block';
+      rescue.scrollIntoView({ behavior: 'smooth' });
+
+      document.getElementById('rescueTitle').innerText = `${emoji} Emergency AI Rescue: ${habit}`;
+      document.getElementById('rescueTalkDown').innerText = "Loading psychological de-escalation guidance...";
+
+      try {
+        const res = await fetch('/api/habit-rescue', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ habit })
+        });
+        const data = await res.json();
+
+        document.getElementById('rescueTitle').innerText = data.title;
+        document.getElementById('rescueTalkDown').innerText = data.talkDown;
+        document.getElementById('rescueMantra').innerText = `"${data.mantra}"`;
+      } catch (err) {
+        document.getElementById('rescueTalkDown').innerText = "Take a slow deep breath. Your body and peace are worth fighting for. Do not trade tomorrow's peace for 5 minutes of numbness.";
+        document.getElementById('rescueMantra').innerText = `"I am stronger than this craving."`;
+      }
+    }
+
+    function startUrgeTimer() {
+      if (timerInterval) return;
+      const display = document.getElementById('timerDisplay');
+      const btn = document.getElementById('startTimerBtn');
+      btn.innerText = "⏳ Surfing Urge...";
+
+      timerInterval = setInterval(() => {
+        secondsLeft--;
+        const mins = Math.floor(secondsLeft / 60);
+        const secs = secondsLeft % 60;
+        display.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+        if (secondsLeft <= 0) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          alert("🎉 15 MINUTES COMPLETE! The urge wave has passed. You did it! You took back your power!");
+          claimCravingVictory();
+        }
+      }, 1000);
+    }
+
+    function resetUrgeTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      secondsLeft = 15 * 60;
+      document.getElementById('timerDisplay').innerText = "15:00";
+      document.getElementById('startTimerBtn').innerText = "🏄 Start Urge Surfing";
+    }
+
+    function claimCravingVictory() {
+      let streak = parseInt(localStorage.getItem("resisted_urges") || "0") + 1;
+      localStorage.setItem("resisted_urges", streak);
+      alert(`🌟 VICTORY LOGGED!\n\nYou have successfully overcome ${streak} destructive urges during your healing journey. Be proud of yourself!`);
+      location.href = "games.html";
+    }
+  </script>
+</body>
+</html>

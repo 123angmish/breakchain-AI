@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smash The Plate – BreakChain AI</title>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    .smash-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+
+    .smash-stage {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 40px 20px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid #f3e5f5;
+      position: relative;
+      min-height: 440px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .plate-target {
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffffff 50%, #e2e8f0 90%, #cbd5e0 100%);
+      border: 8px solid #f8bbd0;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18), inset 0 0 20px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      cursor: pointer;
+      margin: 24px 0;
+      transition: transform 0.1s ease;
+      user-select: none;
+      position: relative;
+    }
+
+    .plate-target:hover {
+      transform: scale(1.05);
+    }
+
+    .plate-target:active {
+      transform: scale(0.95);
+    }
+
+    .plate-inner-pattern {
+      font-size: 13px;
+      font-weight: 700;
+      color: #9c27b0;
+      text-align: center;
+      padding: 10px;
+      word-break: break-word;
+      max-width: 140px;
+    }
+
+    .shard {
+      position: absolute;
+      background: #f8bbd0;
+      pointer-events: none;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      animation: shardFly 0.6s ease-out forwards;
+    }
+
+    @keyframes shardFly {
+      0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+      100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="bc-header">
+    <h1>💔 BreakChain AI</h1>
+  </header>
+
+  <nav class="bc-nav">
+    <div class="bc-nav-links">
+      <a href="index.html">🏠 Home</a>
+      <a href="games.html">🎮 Games Hub</a>
+      <a href="bubble.html">🫧 Bubble Popper</a>
+      <a href="smash.html" class="active">💥 Smash Plate</a>
+      <a href="scribber.html">🎨 Scribbler</a>
+      <a href="breathe.html">🌬️ Breathe</a>
+    </div>
+    <div class="bc-nav-user">
+      <a href="games.html" class="bc-btn-sm">← Back to Games</a>
+    </div>
+  </nav>
+
+  <div class="smash-container">
+    <h1 style="font-size: 36px; color: #3b1145; font-weight: 800;">💥 Smash The Plate – Rage Catharsis</h1>
+    <p style="color: #666; font-size: 16px;">Release your anger and betrayal. Write a painful thought onto the ceramic plate and smash it to pieces!</p>
+
+    <div style="margin: 20px 0; display: flex; justify-content: center; gap: 10px;">
+      <input type="text" id="plateWord" placeholder="Label plate (e.g. Lies, Betrayal, Disrespect, Pain)" style="padding: 10px 16px; border: 1.5px solid #e1bee7; border-radius: 20px; font-size: 14px; width: 300px;" oninput="updatePlateText()" />
+    </div>
+
+    <div class="smash-stage" id="stage">
+      <div style="font-size: 18px; font-weight: 700; color: #8e24aa;">
+        Plates Smashed: <span id="smashCount" style="color: #e91e63; font-size: 24px;">0</span>
+      </div>
+
+      <div class="plate-target" id="plate" onclick="smashPlate(event)">
+        <div style="font-size: 30px;">🍽️</div>
+        <div class="plate-inner-pattern" id="plateLabel">SMASH ME</div>
+        <div style="font-size: 11px; color: #888;">(Click to shatter)</div>
+      </div>
+
+      <div id="smashAffirmation" style="font-size: 16px; font-weight: 700; color: #6a1b9a; height: 24px;">
+        Feel the anger shatter into freedom ✨
+      </div>
+    </div>
+  </div>
+
+  <footer class="bc-footer">
+    <p>© 2025–2026 BreakChain AI. Anger released is peace regained.</p>
+  </footer>
+
+  <script src="soulbot-widget.js"></script>
+  <script>
+    let count = 0;
+    const plate = document.getElementById('plate');
+    const stage = document.getElementById('stage');
+    const countDisplay = document.getElementById('smashCount');
+    const affDisplay = document.getElementById('smashAffirmation');
+
+    const mantras = [
+      "🔥 Shattered into dust! You took your power back!",
+      "💪 Anger released! Your peace is non-negotiable!",
+      "✨ One plate smashed, one heavy burden lifted!",
+      "🕊️ That toxic energy no longer belongs to you!",
+      "💖 You are healing, growing, and completely free!"
+    ];
+
+    // Web Audio Synthesized Crash
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playCrashSound() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      
+      // Noise burst for shatter
+      const bufferSize = audioCtx.sampleRate * 0.25;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.05));
+      }
+
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'highpass';
+      filter.frequency.value = 800;
+
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0.6, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      noise.start();
+    }
+
+    function updatePlateText() {
+      const val = document.getElementById('plateWord').value.trim();
+      document.getElementById('plateLabel').innerText = val ? val.toUpperCase() : "SMASH ME";
+    }
+
+    function smashPlate(e) {
+      playCrashSound();
+      count++;
+      countDisplay.innerText = count;
+      affDisplay.innerText = mantras[Math.floor(Math.random() * mantras.length)];
+
+      // Spawn Shards
+      const rect = plate.getBoundingClientRect();
+      const stageRect = stage.getBoundingClientRect();
+      const originX = rect.left - stageRect.left + rect.width / 2;
+      const originY = rect.top - stageRect.top + rect.height / 2;
+
+      for (let i = 0; i < 16; i++) {
+        const shard = document.createElement('div');
+        shard.className = 'shard';
+        const size = 15 + Math.random() * 25;
+        shard.style.width = `${size}px`;
+        shard.style.height = `${size}px`;
+        shard.style.left = `${originX}px`;
+        shard.style.top = `${originY}px`;
+
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 120 + Math.random() * 160;
+        shard.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
+        shard.style.setProperty('--dy', `${Math.sin(angle) * dist}px`);
+        shard.style.setProperty('--rot', `${Math.random() * 720 - 360}deg`);
+
+        stage.appendChild(shard);
+        setTimeout(() => shard.remove(), 600);
+      }
+
+      // Quick plate wobble & respawn
+      plate.style.opacity = '0';
+      plate.style.transform = 'scale(0.5)';
+      setTimeout(() => {
+        plate.style.opacity = '1';
+        plate.style.transform = 'scale(1)';
+      }, 200);
+    }
+  </script>
+</body>
+</html>

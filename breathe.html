@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Breathe With Me – BreakChain AI</title>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    .breathe-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+
+    .breathe-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 48px 24px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid #f3e5f5;
+    }
+
+    .breathing-sphere {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ce93d8, #8e24aa);
+      margin: 40px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 20px;
+      box-shadow: 0 0 35px rgba(156, 39, 176, 0.4);
+      transition: transform 4s ease-in-out;
+    }
+
+    .breathing-sphere.inhale { transform: scale(1.8); }
+    .breathing-sphere.hold { transform: scale(1.8); box-shadow: 0 0 50px rgba(233, 30, 99, 0.6); }
+    .breathing-sphere.exhale { transform: scale(1.0); }
+
+    .technique-selector {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .tech-btn {
+      padding: 8px 18px;
+      border-radius: 20px;
+      border: 1.5px solid #e1bee7;
+      background: #fdfafc;
+      color: #7b1fa2;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .tech-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="bc-header">
+    <h1>💔 BreakChain AI</h1>
+  </header>
+
+  <nav class="bc-nav">
+    <div class="bc-nav-links">
+      <a href="index.html">🏠 Home</a>
+      <a href="games.html">🎮 Games Hub</a>
+      <a href="bubble.html">🫧 Bubble Popper</a>
+      <a href="smash.html">💥 Smash Plate</a>
+      <a href="scribber.html">🎨 Scribbler</a>
+      <a href="breathe.html" class="active">🌬️ Breathe</a>
+    </div>
+    <div class="bc-nav-user">
+      <a href="games.html" class="bc-btn-sm">← Back to Games</a>
+    </div>
+  </nav>
+
+  <div class="breathe-container">
+    <h1 style="font-size: 36px; color: #3b1145; font-weight: 800;">🌬️ Guided Pranayama & Breathing Coach</h1>
+    <p style="color: #666; font-size: 16px; margin-bottom: 24px;">Activate your parasympathetic nervous system to instantly reduce anxiety, chest tightness, and emotional stress.</p>
+
+    <div class="breathe-card">
+      <div class="technique-selector">
+        <button class="tech-btn active" onclick="setTechnique('478', this)">🧘 4-7-8 Deep Relaxation</button>
+        <button class="tech-btn" onclick="setTechnique('box', this)">📦 4-4-4-4 Box Breathing</button>
+        <button class="tech-btn" onclick="setTechnique('calm', this)">🌿 4-6 Gentle Reset</button>
+      </div>
+
+      <div class="breathing-sphere" id="sphere">Ready</div>
+      <div id="instruction" style="font-size: 20px; font-weight: 700; color: #4a148c; margin-bottom: 24px;">Click Start Session to begin</div>
+
+      <button class="bc-btn" id="toggleBtn" onclick="toggleSession()">▶ Start Guided Session</button>
+    </div>
+  </div>
+
+  <footer class="bc-footer">
+    <p>© 2025–2026 BreakChain AI. Peace is always one breath away.</p>
+  </footer>
+
+  <script src="soulbot-widget.js"></script>
+  <script>
+    let mode = '478';
+    let isRunning = false;
+    let timer = null;
+
+    const sphere = document.getElementById('sphere');
+    const instruct = document.getElementById('instruction');
+    const toggleBtn = document.getElementById('toggleBtn');
+
+    function setTechnique(m, el) {
+      mode = m;
+      document.querySelectorAll('.tech-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      if (isRunning) toggleSession();
+    }
+
+    function toggleSession() {
+      if (isRunning) {
+        clearInterval(timer);
+        isRunning = false;
+        sphere.className = 'breathing-sphere';
+        sphere.innerText = 'Ready';
+        instruct.innerText = 'Session Paused';
+        toggleBtn.innerText = '▶ Start Guided Session';
+        return;
+      }
+
+      isRunning = true;
+      toggleBtn.innerText = '⏸ Pause Session';
+
+      let step = 0;
+      let count = 4;
+
+      function run() {
+        if (mode === '478') {
+          if (step === 0) {
+            sphere.className = 'breathing-sphere inhale';
+            sphere.innerText = 'Inhale';
+            instruct.innerText = `Inhale deeply through nose (${count}s)`;
+            count--;
+            if (count < 0) { step = 1; count = 7; }
+          } else if (step === 1) {
+            sphere.className = 'breathing-sphere hold';
+            sphere.innerText = 'Hold';
+            instruct.innerText = `Hold and keep stillness (${count}s)`;
+            count--;
+            if (count < 0) { step = 2; count = 8; }
+          } else if (step === 2) {
+            sphere.className = 'breathing-sphere exhale';
+            sphere.innerText = 'Exhale';
+            instruct.innerText = `Exhale completely through mouth (${count}s)`;
+            count--;
+            if (count < 0) { step = 0; count = 4; }
+          }
+        } else if (mode === 'box') {
+          if (step === 0) {
+            sphere.className = 'breathing-sphere inhale';
+            sphere.innerText = 'Inhale';
+            instruct.innerText = `Inhale (4s)`;
+            count--;
+            if (count < 0) { step = 1; count = 4; }
+          } else if (step === 1) {
+            sphere.className = 'breathing-sphere hold';
+            sphere.innerText = 'Hold';
+            instruct.innerText = `Hold (4s)`;
+            count--;
+            if (count < 0) { step = 2; count = 4; }
+          } else if (step === 2) {
+            sphere.className = 'breathing-sphere exhale';
+            sphere.innerText = 'Exhale';
+            instruct.innerText = `Exhale (4s)`;
+            count--;
+            if (count < 0) { step = 3; count = 4; }
+          } else if (step === 3) {
+            sphere.className = 'breathing-sphere';
+            sphere.innerText = 'Hold Empty';
+            instruct.innerText = `Hold Empty (4s)`;
+            count--;
+            if (count < 0) { step = 0; count = 4; }
+          }
+        } else {
+          // Calm 4-6
+          if (step === 0) {
+            sphere.className = 'breathing-sphere inhale';
+            sphere.innerText = 'Inhale';
+            instruct.innerText = `Inhale (${count}s)`;
+            count--;
+            if (count < 0) { step = 1; count = 6; }
+          } else {
+            sphere.className = 'breathing-sphere exhale';
+            sphere.innerText = 'Exhale';
+            instruct.innerText = `Exhale gently (${count}s)`;
+            count--;
+            if (count < 0) { step = 0; count = 4; }
+          }
+        }
+      }
+
+      run();
+      timer = setInterval(run, 1000);
+    }
+  </script>
+</body>
+</html>

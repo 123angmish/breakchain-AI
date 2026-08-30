@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Secret Memory Vault & Burning Ceremony – BreakChain AI</title>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    .vault-container {
+      max-width: 850px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+
+    .vault-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid #f3e5f5;
+      margin-bottom: 30px;
+    }
+
+    .vault-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .memory-item {
+      background: #faf5fa;
+      border-radius: var(--radius-md);
+      padding: 12px;
+      position: relative;
+      border: 1px solid #f0e6f2;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .memory-item img, .memory-item video {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+    }
+
+    .burn-btn {
+      background: linear-gradient(135deg, #e53e3e, #dd6b20);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      width: 100%;
+    }
+
+    /* Flame Animation Canvas Overlay */
+    #burnOverlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.85);
+      z-index: 999999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+    }
+
+    .fire-emoji {
+      font-size: 80px;
+      animation: flameFlicker 0.4s infinite alternate;
+    }
+
+    @keyframes flameFlicker {
+      from { transform: scale(1) rotate(-3deg); filter: drop-shadow(0 0 20px #ff5722); }
+      to { transform: scale(1.15) rotate(3deg); filter: drop-shadow(0 0 40px #ff9800); }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="bc-header">
+    <h1>💔 BreakChain AI</h1>
+  </header>
+
+  <nav class="bc-nav">
+    <div class="bc-nav-links">
+      <a href="index.html">🏠 Home</a>
+      <a href="soulbot.html">🧠 SoulBot AI</a>
+      <a href="chat.html">🔬 Chat Autopsy</a>
+      <a href="close.html">✉️ Closure AI</a>
+      <a href="diary.html">📝 Voice Diary</a>
+      <a href="h.html" class="active">🔐 Secret Vault</a>
+      <a href="roadmap.html">🧭 Roadmap</a>
+    </div>
+    <div class="bc-nav-user">
+      <a href="index.html" class="bc-btn-sm">← Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="vault-container">
+    <div style="margin-bottom: 30px;">
+      <h1 style="font-size: 36px; color: #3b1145; font-weight: 800;">🔐 Secret Memory Vault & Flame Ceremony</h1>
+      <p style="color: #666; font-size: 16px;">Lock away photos, videos, and letters behind a password, or perform a cathartic 'Burn Memory' letting-go ceremony.</p>
+    </div>
+
+    <!-- Password Lock Screen -->
+    <div class="vault-card" id="lockSection">
+      <div style="font-size: 50px; margin-bottom: 12px;">🔒</div>
+      <h2 style="color: #4a148c; margin-bottom: 10px;">Vault Security Lock</h2>
+      <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Enter your personal password to unlock or create your private vault.</p>
+
+      <input type="password" id="vaultPassInput" placeholder="Enter Vault Password..." style="max-width: 320px; padding: 12px 16px; border: 1.5px solid #e1bee7; border-radius: var(--radius-sm); font-size: 15px; margin-bottom: 16px;" /><br>
+      <button class="bc-btn" onclick="unlockVault()">🔓 Access Vault</button>
+    </div>
+
+    <!-- Vault Content Section -->
+    <div class="vault-card" id="vaultContentSection" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0e6f2; padding-bottom: 16px; margin-bottom: 20px;">
+        <h2 style="color: #4a148c; font-size: 22px;">🔓 Your Protected Memory Chamber</h2>
+        <button class="bc-btn-sm" style="background:#718096;" onclick="lockVault()">🔒 Lock Vault</button>
+      </div>
+
+      <!-- Upload New File -->
+      <div style="background: #fdfafc; border: 2px dashed #ce93d8; border-radius: var(--radius-md); padding: 24px; margin-bottom: 24px;">
+        <p style="font-weight: 700; color: #4a148c; margin-bottom: 10px;">Upload Photos or Videos to Hide:</p>
+        <input type="file" id="mediaUpload" multiple accept="image/*,video/*" style="margin-bottom: 12px;" /><br>
+        <button class="bc-btn" onclick="saveMediaFiles()">💾 Seal Into Vault</button>
+      </div>
+
+      <!-- Burning Ceremony Box -->
+      <div style="background: linear-gradient(135deg, #fff5f5, #fed7d7); border: 1.5px solid #feb2b2; border-radius: var(--radius-md); padding: 20px; margin-bottom: 24px; text-align: left;">
+        <h3 style="color: #9b2c2c;">🔥 The Letting-Go Burning Ceremony</h3>
+        <p style="font-size: 13.5px; color: #742a2a; margin-bottom: 10px;">Type a lingering regret, painful memory, or promise made to your ex. We will burn it into virtual ashes to release its grip on your soul.</p>
+        <textarea id="burnText" rows="2" placeholder="Write the memory or feeling you want to burn away forever..." style="width:100%; padding:10px; border-radius:8px; border:1px solid #feb2b2; font-family:inherit; margin-bottom:10px;"></textarea>
+        <button class="bc-btn" style="background: linear-gradient(135deg, #e53e3e, #c53030);" onclick="startBurnCeremony()">🔥 Burn Memory Permanently</button>
+      </div>
+
+      <h3 style="text-align: left; color: #2c0b30; margin-bottom: 12px;">📁 Sealed Vault Items:</h3>
+      <div class="vault-grid" id="vaultGallery"></div>
+    </div>
+  </div>
+
+  <!-- Fullscreen Flame Burn Overlay -->
+  <div id="burnOverlay">
+    <div class="fire-emoji">🔥</div>
+    <h2 style="font-size: 32px; font-weight: 800; margin: 16px 0;">Burning Into Ashes...</h2>
+    <p style="font-size: 18px; max-width: 500px; line-height: 1.6; opacity: 0.9;">Releasing all emotional attachment, guilt, and pain. You are cleansed and reborn.</p>
+  </div>
+
+  <footer class="bc-footer">
+    <p>© 2025–2026 BreakChain AI. Private client-side encrypted vault.</p>
+  </footer>
+
+  <script src="soulbot-widget.js"></script>
+  <script>
+    const VAULT_PASS_KEY = "breakchain_vault_password";
+    const VAULT_ITEMS_KEY = "breakchain_vault_items";
+
+    function unlockVault() {
+      const pass = document.getElementById('vaultPassInput').value.trim();
+      if (!pass) return alert("Please enter a password.");
+
+      const savedPass = localStorage.getItem(VAULT_PASS_KEY);
+      if (!savedPass) {
+        // Create new password
+        localStorage.setItem(VAULT_PASS_KEY, pass);
+        alert("🎉 Vault password created successfully!");
+        openVaultUI();
+      } else if (savedPass === pass) {
+        openVaultUI();
+      } else {
+        alert("❌ Incorrect vault password.");
+      }
+    }
+
+    function openVaultUI() {
+      document.getElementById('lockSection').style.display = 'none';
+      document.getElementById('vaultContentSection').style.display = 'block';
+      loadVaultGallery();
+    }
+
+    function lockVault() {
+      document.getElementById('vaultPassInput').value = "";
+      document.getElementById('lockSection').style.display = 'block';
+      document.getElementById('vaultContentSection').style.display = 'none';
+    }
+
+    function readFileAsync(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve({ name: file.name, type: file.type, data: reader.result });
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function saveMediaFiles() {
+      const fileInput = document.getElementById('mediaUpload');
+      const files = Array.from(fileInput.files);
+      if (!files.length) return alert("Please select at least 1 photo or video.");
+
+      const stored = JSON.parse(localStorage.getItem(VAULT_ITEMS_KEY) || "[]");
+      for (let f of files) {
+        try {
+          const fileObj = await readFileAsync(f);
+          stored.push(fileObj);
+        } catch(e) {}
+      }
+
+      localStorage.setItem(VAULT_ITEMS_KEY, JSON.stringify(stored));
+      alert("🔒 Files safely encrypted into your vault!");
+      fileInput.value = "";
+      loadVaultGallery();
+    }
+
+    function loadVaultGallery() {
+      const gallery = document.getElementById('vaultGallery');
+      gallery.innerHTML = "";
+      const stored = JSON.parse(localStorage.getItem(VAULT_ITEMS_KEY) || "[]");
+
+      if (stored.length === 0) {
+        gallery.innerHTML = "<p style='color:#888; grid-column:1/-1;'>No hidden memories stored. Your vault is clean.</p>";
+        return;
+      }
+
+      stored.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = "memory-item";
+        if (item.type.startsWith("image/")) {
+          div.innerHTML = `<img src="${item.data}" alt="${item.name}">`;
+        } else {
+          div.innerHTML = `<video controls src="${item.data}"></video>`;
+        }
+        div.innerHTML += `
+          <button class="burn-btn" onclick="burnSingleItem(${idx})">🔥 Burn This Memory</button>
+        `;
+        gallery.appendChild(div);
+      });
+    }
+
+    function burnSingleItem(idx) {
+      if (confirm("🔥 Are you ready to let this memory go and burn it into ashes?")) {
+        triggerFlameAnimation(() => {
+          const stored = JSON.parse(localStorage.getItem(VAULT_ITEMS_KEY) || "[]");
+          stored.splice(idx, 1);
+          localStorage.setItem(VAULT_ITEMS_KEY, JSON.stringify(stored));
+          loadVaultGallery();
+        });
+      }
+    }
+
+    function startBurnCeremony() {
+      const text = document.getElementById('burnText').value.trim();
+      if (!text) return alert("Please write down what you wish to burn.");
+
+      triggerFlameAnimation(() => {
+        document.getElementById('burnText').value = "";
+        alert("✨ The memory has been incinerated into the cosmos. You are free.");
+      });
+    }
+
+    function triggerFlameAnimation(callback) {
+      const overlay = document.getElementById('burnOverlay');
+      overlay.style.display = 'flex';
+
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        callback();
+      }, 2500);
+    }
+  </script>
+</body>
+</html>

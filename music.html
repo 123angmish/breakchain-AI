@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mood Playlist & Ambient Soundscapes – BreakChain AI</title>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    .music-container {
+      max-width: 950px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+
+    .music-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid #f3e5f5;
+      margin-bottom: 30px;
+    }
+
+    .ambient-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+
+    .ambient-btn {
+      background: #fdfafc;
+      border: 1.5px solid #e1bee7;
+      border-radius: var(--radius-md);
+      padding: 16px;
+      font-weight: 700;
+      color: #7b1fa2;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .ambient-btn:hover, .ambient-btn.active {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .playlist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+      margin-top: 24px;
+      text-align: left;
+    }
+
+    .playlist-item {
+      background: #fff;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      border: 1.5px solid #f8bbd0;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s;
+    }
+
+    .playlist-item:hover {
+      transform: translateY(-4px);
+    }
+
+    .playlist-item h3 {
+      font-size: 17px;
+      color: #2c0b30;
+      margin-bottom: 6px;
+    }
+
+    .playlist-item p {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 14px;
+    }
+
+    .spotify-btn {
+      background: #1db954;
+      color: white;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="bc-header">
+    <h1>💔 BreakChain AI</h1>
+  </header>
+
+  <nav class="bc-nav">
+    <div class="bc-nav-links">
+      <a href="index.html">🏠 Home</a>
+      <a href="soulbot.html">🧠 SoulBot AI</a>
+      <a href="chat.html">🔬 Chat Autopsy</a>
+      <a href="close.html">✉️ Closure AI</a>
+      <a href="diary.html">📝 Voice Diary</a>
+      <a href="games.html">🎮 Healing Games</a>
+      <a href="music.html" class="active">🎶 Mood Music</a>
+      <a href="roadmap.html">🧭 Roadmap</a>
+    </div>
+    <div class="bc-nav-user">
+      <a href="index.html" class="bc-btn-sm">← Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="music-container">
+    <h1 style="font-size: 36px; color: #3b1145; font-weight: 800;">🎶 Mood Playlists & Soothing Soundscapes</h1>
+    <p style="color: #666; font-size: 16px; margin-bottom: 24px;">Music touches where words cannot reach. Choose your emotion or play instant built-in healing frequencies.</p>
+
+    <!-- Built-in Ambient Frequency Soundscape Generator -->
+    <div class="music-card">
+      <h2 style="font-size: 20px; color: #4a148c; margin-bottom: 6px;">🎧 Built-In Healing Frequency Synthesizer</h2>
+      <p style="font-size: 13.5px; color: #666;">Play instant pure relaxing sound waves right in your browser (No ads, continuous peace):</p>
+
+      <div class="ambient-controls">
+        <button class="ambient-btn" id="btn432" onclick="toggleTone(432, 'btn432')">
+          <span style="font-size: 26px;">✨</span> 432 Hz Miracle Tone (Heart Healing)
+        </button>
+        <button class="ambient-btn" id="btn528" onclick="toggleTone(528, 'btn528')">
+          <span style="font-size: 26px;">🌿</span> 528 Hz Transformation (Anxiety Release)
+        </button>
+        <button class="ambient-btn" id="btnPink" onclick="togglePinkNoise('btnPink')">
+          <span style="font-size: 26px;">🌧️</span> Soothing Soft Rain / Pink Noise
+        </button>
+        <button class="ambient-btn" id="btnWhite" onclick="toggleWhiteNoise('btnWhite')">
+          <span style="font-size: 26px;">🌊</span> Ocean Breeze / Calm Sleep Noise
+        </button>
+      </div>
+
+      <div id="soundStatus" style="font-weight: 700; color: #8e24aa; font-size: 14px;">Sound: Stopped</div>
+    </div>
+
+    <!-- Mood Spotify Playlists -->
+    <div class="music-card" style="text-align: left;">
+      <h2 style="font-size: 20px; color: #4a148c; margin-bottom: 16px;">Curated Spotify Breakup Playlists</h2>
+
+      <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+        <select id="genreSelect" onchange="filterPlaylists()" style="padding: 10px 16px; border-radius: 20px; border: 1.5px solid #e1bee7; font-family: inherit; font-size: 14px; font-weight: 600;">
+          <option value="all">🌟 All Playlists</option>
+          <option value="heartbroken">💔 Heartbroken & Crying</option>
+          <option value="rage">🔥 Rage, Anger & Workout</option>
+          <option value="rebuilding">🌱 Rebuilding & Self-Love</option>
+          <option value="calm">🧘 Peaceful Piano & Lofi</option>
+        </select>
+      </div>
+
+      <div class="playlist-grid" id="playlistGrid">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <footer class="bc-footer">
+    <p>© 2025–2026 BreakChain AI. Let the harmony heal you.</p>
+  </footer>
+
+  <script src="soulbot-widget.js"></script>
+  <script>
+    const playlistData = [
+      { category: "heartbroken", title: "Heartbreak Hotel", desc: "For when you just need to let the tears flow without guilt.", url: "https://open.spotify.com/playlist/37i9dQZF1DWX83CujKHHOn" },
+      { category: "heartbroken", title: "Sad Bops & Melancholy", desc: "Soulful tracks that understand the heavy silence in your room.", url: "https://open.spotify.com/playlist/37i9dQZF1DX7qK8ma5wgG1" },
+      { category: "rage", title: "Rage Beats & Betrayal", desc: "Channel that fiery anger and fuel your workout or run.", url: "https://open.spotify.com/playlist/37i9dQZF1DWYkaDif7Ztbp" },
+      { category: "rage", title: "Beast Mode Motivation", desc: "Remind yourself who the hell you are. Reclaim your grit.", url: "https://open.spotify.com/playlist/37i9dQZF1DX76Wlfdnj7AP" },
+      { category: "rebuilding", title: "Self Love Club", desc: "Feel-good pop & affirmations for stepping into your glow-up.", url: "https://open.spotify.com/playlist/37i9dQZF1DX7QC1DnNmeHM" },
+      { category: "rebuilding", title: "Rise Again & New Chapter", desc: "Hopeful acoustic rhythms for starting completely fresh.", url: "https://open.spotify.com/playlist/37i9dQZF1DX9tPFwDMOaN1" },
+      { category: "calm", title: "Peaceful Piano Healing", desc: "Soothing classical piano keys to quiet down racing thoughts.", url: "https://open.spotify.com/playlist/37i9dQZF1DX4sWSpwq3LiO" },
+      { category: "calm", title: "Lo-Fi Late Night Calm", desc: "Gentle mellow beats for insomniac nights and quiet reflection.", url: "https://open.spotify.com/playlist/37i9dQZF1DX889U0CL85jj" }
+    ];
+
+    function filterPlaylists() {
+      const cat = document.getElementById('genreSelect').value;
+      const grid = document.getElementById('playlistGrid');
+      const filtered = cat === 'all' ? playlistData : playlistData.filter(p => p.category === cat);
+
+      grid.innerHTML = filtered.map(p => `
+        <div class="playlist-item">
+          <div>
+            <h3>${p.title}</h3>
+            <p>${p.desc}</p>
+          </div>
+          <a href="${p.url}" target="_blank" class="spotify-btn">
+            ▶ Open on Spotify
+          </a>
+        </div>
+      `).join('');
+    }
+
+    // Audio Context Frequency Generator
+    let audioCtx = null;
+    let currentOsc = null;
+    let currentGain = null;
+    let currentNoise = null;
+    let activeBtnId = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function stopAllAudio() {
+      if (currentOsc) { currentOsc.stop(); currentOsc.disconnect(); currentOsc = null; }
+      if (currentNoise) { currentNoise.stop(); currentNoise.disconnect(); currentNoise = null; }
+      document.querySelectorAll('.ambient-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('soundStatus').innerText = "Sound: Stopped";
+    }
+
+    function toggleTone(freq, btnId) {
+      initAudio();
+      if (activeBtnId === btnId) {
+        stopAllAudio();
+        activeBtnId = null;
+        return;
+      }
+
+      stopAllAudio();
+      activeBtnId = btnId;
+      document.getElementById(btnId).classList.add('active');
+      document.getElementById('soundStatus').innerText = `🔊 Playing ${freq}Hz Harmonic Sine Wave...`;
+
+      currentOsc = audioCtx.createOscillator();
+      currentGain = audioCtx.createGain();
+      currentOsc.type = 'sine';
+      currentOsc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+      currentGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+      currentGain.gain.exponentialRampToValueAtTime(0.18, audioCtx.currentTime + 1);
+
+      currentOsc.connect(currentGain);
+      currentGain.connect(audioCtx.destination);
+      currentOsc.start();
+    }
+
+    function togglePinkNoise(btnId) {
+      initAudio();
+      if (activeBtnId === btnId) {
+        stopAllAudio();
+        activeBtnId = null;
+        return;
+      }
+      stopAllAudio();
+      activeBtnId = btnId;
+      document.getElementById(btnId).classList.add('active');
+      document.getElementById('soundStatus').innerText = "🌧️ Playing Soft Rain Soundscape...";
+
+      const bufferSize = audioCtx.sampleRate * 2;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      let b0 = 0, b1 = 0, b2 = 0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        data[i] = (b0 + b1 + b2 + white * 0.5362) * 0.11;
+      }
+
+      currentNoise = audioCtx.createBufferSource();
+      currentNoise.buffer = buffer;
+      currentNoise.loop = true;
+
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      currentNoise.connect(gain);
+      gain.connect(audioCtx.destination);
+      currentNoise.start();
+    }
+
+    function toggleWhiteNoise(btnId) {
+      initAudio();
+      if (activeBtnId === btnId) {
+        stopAllAudio();
+        activeBtnId = null;
+        return;
+      }
+      stopAllAudio();
+      activeBtnId = btnId;
+      document.getElementById(btnId).classList.add('active');
+      document.getElementById('soundStatus').innerText = "🌊 Playing Ocean Breeze Soundscape...";
+
+      const bufferSize = audioCtx.sampleRate * 2;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.08;
+      }
+
+      currentNoise = audioCtx.createBufferSource();
+      currentNoise.buffer = buffer;
+      currentNoise.loop = true;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 400;
+
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+
+      currentNoise.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      currentNoise.start();
+    }
+
+    window.onload = filterPlaylists;
+  </script>
+</body>
+</html>

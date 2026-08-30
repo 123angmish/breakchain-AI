@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memory Time Capsule – BreakChain AI</title>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    .capsule-container {
+      max-width: 850px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+
+    .capsule-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid #f3e5f5;
+      margin-bottom: 30px;
+    }
+
+    .capsule-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-top: 24px;
+      text-align: left;
+    }
+
+    .c-item {
+      background: #fdfafc;
+      border: 1.5px solid #f8bbd0;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+
+    .c-item.locked {
+      border-left: 5px solid #e91e63;
+    }
+
+    .c-item.unlocked {
+      border-left: 5px solid #4caf50;
+      background: #f1f8e9;
+    }
+
+    .countdown-tag {
+      font-size: 13px;
+      font-weight: 700;
+      color: #9c27b0;
+      margin: 8px 0;
+    }
+
+    .message-content {
+      background: white;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px dashed #ccc;
+      margin-top: 10px;
+      font-family: 'Georgia', serif;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="bc-header">
+    <h1>💔 BreakChain AI</h1>
+  </header>
+
+  <nav class="bc-nav">
+    <div class="bc-nav-links">
+      <a href="index.html">🏠 Home</a>
+      <a href="soulbot.html">🧠 SoulBot AI</a>
+      <a href="chat.html">🔬 Chat Autopsy</a>
+      <a href="close.html">✉️ Closure AI</a>
+      <a href="diary.html">📝 Voice Diary</a>
+      <a href="memory.html" class="active">🕰️ Time Capsule</a>
+      <a href="roadmap.html">🧭 Roadmap</a>
+    </div>
+    <div class="bc-nav-user">
+      <a href="index.html" class="bc-btn-sm">← Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="capsule-container">
+    <div style="margin-bottom: 30px;">
+      <h1 style="font-size: 36px; color: #3b1145; font-weight: 800;">🕰️ Emotional Time Capsule</h1>
+      <p style="color: #666; font-size: 16px;">Write a letter to the future healed version of yourself. Lock it away until a future date when your heart is peaceful.</p>
+    </div>
+
+    <!-- Create Capsule Card -->
+    <div class="capsule-card">
+      <div style="font-size: 40px; margin-bottom: 10px;">📦</div>
+      <h2 style="color: #4a148c; margin-bottom: 16px;">Seal a New Time Capsule</h2>
+
+      <div style="text-align: left; margin-bottom: 16px;">
+        <label style="font-weight: 700; color: #4a148c; font-size: 14px;">Message to Your Future Self:</label>
+        <textarea id="capsuleMsg" rows="5" placeholder="Dear future me, today I was in tears, but I hope when you open this, you are smiling, thriving, and deeply at peace..." style="width: 100%; padding: 14px; border: 1.5px solid #e1bee7; border-radius: var(--radius-sm); font-family: inherit; margin-top: 6px;"></textarea>
+      </div>
+
+      <div style="text-align: left; margin-bottom: 24px;">
+        <label style="font-weight: 700; color: #4a148c; font-size: 14px;">Unlock Date:</label>
+        <input type="date" id="capsuleDate" style="width: 100%; padding: 12px; border: 1.5px solid #e1bee7; border-radius: var(--radius-sm); font-family: inherit; margin-top: 6px;" />
+      </div>
+
+      <button class="bc-btn" style="width: 100%;" onclick="sealCapsule()">
+        🔒 Seal Capsule in Time
+      </button>
+    </div>
+
+    <!-- Capsules Grid -->
+    <h2 style="text-align: left; font-size: 22px; color: #2c0b30; margin-bottom: 16px;">📜 Your Sealed & Unlocked Capsules:</h2>
+    <div class="capsule-grid" id="capsulesGrid"></div>
+  </div>
+
+  <footer class="bc-footer">
+    <p>© 2025–2026 BreakChain AI. Time heals all wounds.</p>
+  </footer>
+
+  <script src="soulbot-widget.js"></script>
+  <script>
+    // Set default unlock date to 3 months in future
+    const d = new Date();
+    d.setMonth(d.getMonth() + 3);
+    document.getElementById('capsuleDate').value = d.toISOString().split('T')[0];
+
+    function sealCapsule() {
+      const msg = document.getElementById('capsuleMsg').value.trim();
+      const date = document.getElementById('capsuleDate').value;
+      if (!msg || !date) return alert("Please write a message and select an unlock date.");
+
+      const newCapsule = {
+        id: Date.now(),
+        message: msg,
+        unlockDate: date,
+        sealedDate: new Date().toLocaleDateString()
+      };
+
+      const stored = JSON.parse(localStorage.getItem("time_capsules") || "[]");
+      stored.push(newCapsule);
+      localStorage.setItem("time_capsules", JSON.stringify(stored));
+
+      alert("🕰️ Time Capsule sealed successfully! It will wait for you.");
+      document.getElementById('capsuleMsg').value = "";
+      loadCapsules();
+    }
+
+    function loadCapsules() {
+      const grid = document.getElementById('capsulesGrid');
+      grid.innerHTML = "";
+      const stored = JSON.parse(localStorage.getItem("time_capsules") || "[]");
+
+      if (stored.length === 0) {
+        grid.innerHTML = "<p style='color:#888; grid-column:1/-1;'>No capsules sealed yet. Write one above!</p>";
+        return;
+      }
+
+      const today = new Date().toISOString().split('T')[0];
+
+      stored.forEach((c) => {
+        const isUnlocked = today >= c.unlockDate;
+        const div = document.createElement('div');
+        div.className = `c-item ${isUnlocked ? 'unlocked' : 'locked'}`;
+
+        div.innerHTML = `
+          <div style="font-weight: 700; color: ${isUnlocked ? '#2e7d32' : '#c2185b'};">
+            ${isUnlocked ? '🔓 Ready to Read!' : '🔒 Locked in Time'}
+          </div>
+          <div style="font-size: 12px; color: #718096; margin-top: 4px;">Sealed on: ${c.sealedDate}</div>
+          <div class="countdown-tag">Unlock Date: ${new Date(c.unlockDate).toDateString()}</div>
+          
+          ${isUnlocked ? `
+            <div class="message-content">
+              💌 <strong>Letter to Yourself:</strong><br><br>
+              ${c.message}
+            </div>
+          ` : `
+            <div style="margin-top: 10px; font-size: 13px; color: #888;">
+              ⏳ This capsule is locked to protect your healing journey. Come back on the unlock date to read what past you wrote.
+            </div>
+          `}
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    window.onload = loadCapsules;
+  </script>
+</body>
+</html>

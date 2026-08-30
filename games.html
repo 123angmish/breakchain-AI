@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Healing Games Hub – BreakChain AI</title>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    .games-container {
+      max-width: 1050px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      margin-top: 36px;
+    }
+
+    .game-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 32px 24px;
+      box-shadow: var(--shadow-sm);
+      border: 1.5px solid #f3e5f5;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .game-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary-light);
+    }
+
+    .game-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 20px;
+      background: #fdf0fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 14px rgba(156, 39, 176, 0.12);
+    }
+
+    .game-card h3 {
+      font-size: 20px;
+      color: #2c0b30;
+      margin-bottom: 8px;
+    }
+
+    .game-card p {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="bc-header">
+    <h1>💔 BreakChain AI</h1>
+  </header>
+
+  <nav class="bc-nav">
+    <div class="bc-nav-links">
+      <a href="index.html">🏠 Home</a>
+      <a href="soulbot.html">🧠 SoulBot AI</a>
+      <a href="chat.html">🔬 Chat Autopsy</a>
+      <a href="close.html">✉️ Closure AI</a>
+      <a href="diary.html">📝 Voice Diary</a>
+      <a href="games.html" class="active">🎮 Healing Games</a>
+      <a href="roadmap.html">🧭 Roadmap</a>
+    </div>
+    <div class="bc-nav-user">
+      <a href="index.html" class="bc-btn-sm">← Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="games-container">
+    <h1 style="font-size: 36px; color: #3b1145; font-weight: 800;">🎮 Therapeutic Play & Stress Relief</h1>
+    <p style="color: #666; font-size: 16px;">Distract your racing mind, release pent-up rage, or gently reset your nervous system through interactive soothing games.</p>
+
+    <div class="games-grid">
+      <a href="bubble.html" class="game-card">
+        <div class="game-icon">🫧</div>
+        <h3>Bubble Popper</h3>
+        <p>Pop floating colorful bubbles to soothe anxiety, reduce heartbeat, and release light stress.</p>
+        <span class="bc-btn-sm">Play Bubble Popper →</span>
+      </a>
+
+      <a href="smash.html" class="game-card">
+        <div class="game-icon">💥</div>
+        <h3>Smash The Plate</h3>
+        <p>Shatter virtual ceramic plates with realistic audio for instant cathartic anger release.</p>
+        <span class="bc-btn-sm">Play Smash Plate →</span>
+      </a>
+
+      <a href="scribber.html" class="game-card">
+        <div class="game-icon">🎨</div>
+        <h3>Mood Scribbler</h3>
+        <p>Express emotions through freehand digital art, color palettes, and doodle therapy.</p>
+        <span class="bc-btn-sm">Open Scribbler →</span>
+      </a>
+
+      <a href="breathe.html" class="game-card">
+        <div class="game-icon">🌬️</div>
+        <h3>Breathe With Me</h3>
+        <p>Visual 4-7-8 and Box Breathing coach to calm panic spikes and late-night insomnia.</p>
+        <span class="bc-btn-sm">Start Breathing →</span>
+      </a>
+    </div>
+  </div>
+
+  <footer class="bc-footer">
+    <p>© 2025–2026 BreakChain AI. Rest your mind.</p>
+  </footer>
+
+  <script src="soulbot-widget.js"></script>
+</body>
+</html>
