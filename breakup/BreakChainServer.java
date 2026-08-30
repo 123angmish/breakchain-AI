@@ -28,36 +28,43 @@ public class BreakChainServer {
             .connectTimeout(Duration.ofSeconds(4))
             .build();
 
-    public static void main(String[] args) throws IOException {
-        int port = PORT;
-        if (args.length > 0) {
-            try {
-                port = Integer.parseInt(args[0]);
-            } catch (NumberFormatException ignored) {}
+    public static void main(String[] args) {
+        try {
+            int port = PORT;
+            if (args.length > 0) {
+                try {
+                    port = Integer.parseInt(args[0]);
+                } catch (NumberFormatException ignored) {}
+            }
+
+            HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
+
+            // API Endpoints
+            server.createContext("/api/health", new HealthHandler());
+            server.createContext("/api/chat", new ChatHandler());
+            server.createContext("/api/autopsy", new AutopsyHandler());
+            server.createContext("/api/closure", new ClosureHandler());
+            server.createContext("/api/diary-reflect", new DiaryReflectHandler());
+            server.createContext("/api/roadmap", new RoadmapHandler());
+            server.createContext("/api/habit-rescue", new HabitRescueHandler());
+            server.createContext("/api/therapists", new TherapistsHandler());
+
+            // Static File Serving
+            server.createContext("/", new StaticFileHandler());
+
+            server.setExecutor(java.util.concurrent.Executors.newCachedThreadPool());
+            server.start();
+
+            System.out.println("=================================================");
+            System.out.println("💔 BreakChain AI Java Server is running!");
+            System.out.println("🔗 Open in browser: http://localhost:" + port);
+            System.out.println("=================================================");
+
+            // Keep main thread alive
+            Thread.currentThread().join();
+        } catch (Exception e) {
+            System.err.println("BreakChainServer error: " + e.getMessage());
         }
-
-        HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-
-        // API Endpoints
-        server.createContext("/api/health", new HealthHandler());
-        server.createContext("/api/chat", new ChatHandler());
-        server.createContext("/api/autopsy", new AutopsyHandler());
-        server.createContext("/api/closure", new ClosureHandler());
-        server.createContext("/api/diary-reflect", new DiaryReflectHandler());
-        server.createContext("/api/roadmap", new RoadmapHandler());
-        server.createContext("/api/habit-rescue", new HabitRescueHandler());
-        server.createContext("/api/therapists", new TherapistsHandler());
-
-        // Static File Serving
-        server.createContext("/", new StaticFileHandler());
-
-        server.setExecutor(java.util.concurrent.Executors.newCachedThreadPool());
-        server.start();
-
-        System.out.println("=================================================");
-        System.out.println("💔 BreakChain AI Java Server is running!");
-        System.out.println("🔗 Open in browser: http://localhost:" + port);
-        System.out.println("=================================================");
     }
 
     // ==========================================
@@ -478,8 +485,6 @@ public class BreakChainServer {
             String body = readRequestBody(exchange);
             String type = extractJsonString(body, "type");
             if (type.isEmpty()) type = "General";
-            String duration = extractJsonString(body, "duration");
-            if (duration.isEmpty()) duration = "1 year";
 
             String json = "{\n" +
                     "  \"breakupType\": \"" + escapeJson(type) + "\",\n" +
@@ -618,13 +623,12 @@ public class BreakChainServer {
                 path = "/index.html";
             }
 
-            // Look in current directory or breakup subdirectory
+            // Search paths
             File file = new File("." + path);
             if (!file.exists() || file.isDirectory()) {
                 file = new File("./breakup" + path);
             }
             if (!file.exists() || file.isDirectory()) {
-                // Check if inside breakup already
                 file = new File(".." + path);
             }
 
