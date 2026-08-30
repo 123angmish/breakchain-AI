@@ -46,9 +46,9 @@
         position: fixed;
         bottom: 96px;
         right: 24px;
-        width: 380px;
+        width: 390px;
         max-width: calc(100vw - 32px);
-        height: 540px;
+        height: 560px;
         max-height: calc(100vh - 120px);
         background: #ffffff;
         border-radius: 20px;
@@ -59,6 +59,7 @@
         z-index: 99999;
         border: 1px solid rgba(162, 60, 173, 0.15);
         animation: soulbot-slide-up 0.3s ease-out forwards;
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
       }
       @keyframes soulbot-slide-up {
         from { opacity: 0; transform: translateY(20px) scale(0.95); }
@@ -81,7 +82,7 @@
         font-size: 16px;
       }
       .sb-title span {
-        font-size: 12px;
+        font-size: 11px;
         background: rgba(255,255,255,0.25);
         padding: 2px 8px;
         border-radius: 12px;
@@ -103,9 +104,42 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        transition: 0.2s;
       }
       .sb-controls button:hover {
         background: rgba(255,255,255,0.35);
+      }
+
+      /* Settings Panel inside modal */
+      #sb-settings-panel {
+        display: none;
+        background: #fbf5fc;
+        border-bottom: 1px solid #ebd0f5;
+        padding: 12px 16px;
+        font-size: 13px;
+        animation: fadeIn 0.2s ease-in;
+      }
+      #sb-settings-panel select, #sb-settings-panel input {
+        width: 100%;
+        padding: 7px 10px;
+        margin-top: 5px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        border: 1px solid #d4b5df;
+        font-size: 12px;
+        outline: none;
+        box-sizing: border-box;
+      }
+      #sb-settings-panel .save-btn {
+        background: #a23cad;
+        color: white;
+        border: none;
+        padding: 6px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 12px;
+        width: 100%;
       }
 
       .sb-chat-body {
@@ -129,170 +163,211 @@
       }
       .sb-msg.bot {
         align-self: flex-start;
-        background: #f3e5f5;
-        color: #2c0b30;
+        background: #ffffff;
+        color: #333333;
+        border: 1px solid #f0def4;
         border-bottom-left-radius: 4px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        box-shadow: 0 2px 8px rgba(162, 60, 173, 0.06);
       }
       .sb-msg.user {
         align-self: flex-end;
-        background: linear-gradient(135deg, #a23cad, #c2185b);
-        color: white;
+        background: linear-gradient(135deg, #a23cad, #e91e63);
+        color: #ffffff;
         border-bottom-right-radius: 4px;
-        box-shadow: 0 2px 6px rgba(162,60,173,0.25);
       }
-      .sb-msg.bot .sb-tts-btn {
-        margin-top: 6px;
-        font-size: 11px;
-        background: rgba(162,60,173,0.12);
-        border: none;
-        border-radius: 8px;
-        padding: 3px 8px;
-        cursor: pointer;
-        color: #6a1b9a;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-      }
-      .sb-msg.bot .sb-tts-btn:hover {
-        background: rgba(162,60,173,0.22);
-      }
-
-      .sb-chips {
-        padding: 8px 12px;
-        background: #ffffff;
-        border-top: 1px solid #f0e6f2;
+      .sb-msg-meta {
+        font-size: 10px;
+        opacity: 0.7;
+        margin-top: 4px;
         display: flex;
-        gap: 6px;
-        overflow-x: auto;
-        white-space: nowrap;
-        scrollbar-width: none;
-      }
-      .sb-chips::-webkit-scrollbar { display: none; }
-      .sb-chip {
-        background: #fdf0fa;
-        color: #8e24aa;
-        border: 1px solid #f8bbd0;
-        padding: 4px 10px;
-        border-radius: 14px;
-        font-size: 12px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: all 0.2s;
-      }
-      .sb-chip:hover {
-        background: #a23cad;
-        color: white;
-      }
-
-      .sb-input-area {
-        padding: 10px 14px;
-        background: #ffffff;
-        border-top: 1px solid #f0e6f2;
-        display: flex;
+        justify-content: space-between;
         align-items: center;
-        gap: 8px;
-      }
-      .sb-input-area input {
-        flex: 1;
-        padding: 10px 14px;
-        border: 1.5px solid #e1bee7;
-        border-radius: 24px;
-        outline: none;
-        font-size: 14px;
-        transition: border-color 0.2s;
-      }
-      .sb-input-area input:focus {
-        border-color: #a23cad;
-      }
-      .sb-input-area button {
-        background: #a23cad;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 38px;
-        height: 38px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 15px;
-        transition: background 0.2s;
-      }
-      .sb-input-area button:hover {
-        background: #8e24aa;
-      }
-      .sb-input-area #sb-mic-btn {
-        background: #f3e5f5;
-        color: #8e24aa;
-      }
-      .sb-input-area #sb-mic-btn.listening {
-        background: #e91e63;
-        color: white;
-        animation: soulbot-pulse 1s infinite;
       }
 
       .sb-typing {
+        align-self: flex-start;
+        background: #ffffff;
+        padding: 10px 16px;
+        border-radius: 16px;
+        border-bottom-left-radius: 4px;
         display: flex;
         gap: 4px;
-        padding: 8px 12px;
-        background: #f3e5f5;
-        border-radius: 16px;
-        width: fit-content;
+        align-items: center;
+        border: 1px solid #f0def4;
       }
       .sb-typing-dot {
         width: 6px;
         height: 6px;
-        background: #a23cad;
         border-radius: 50%;
-        animation: sb-bounce 1.4s infinite ease-in-out both;
+        background: #a23cad;
+        animation: sb-bounce 1.2s infinite ease-in-out;
       }
-      .sb-typing-dot:nth-child(1) { animation-delay: -0.32s; }
-      .sb-typing-dot:nth-child(2) { animation-delay: -0.16s; }
+      .sb-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+      .sb-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
       @keyframes sb-bounce {
         0%, 80%, 100% { transform: scale(0); }
         40% { transform: scale(1); }
       }
+
+      .sb-quick-chips {
+        padding: 8px 12px;
+        background: #faf2fc;
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        border-top: 1px solid #f4e3fa;
+        scrollbar-width: none;
+      }
+      .sb-quick-chips::-webkit-scrollbar { display: none; }
+      .sb-chip {
+        white-space: nowrap;
+        background: #ffffff;
+        border: 1px solid #e1bde9;
+        color: #7b2685;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .sb-chip:hover {
+        background: #a23cad;
+        color: white;
+        border-color: #a23cad;
+      }
+
+      .sb-input-box {
+        padding: 12px 14px;
+        background: #ffffff;
+        border-top: 1px solid #f0def4;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .sb-input-box input {
+        flex: 1;
+        border: 1px solid #ecd3f3;
+        border-radius: 24px;
+        padding: 10px 14px;
+        font-size: 13px;
+        outline: none;
+        transition: 0.2s;
+      }
+      .sb-input-box input:focus {
+        border-color: #a23cad;
+        box-shadow: 0 0 0 2px rgba(162, 60, 173, 0.15);
+      }
+      .sb-btn-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        transition: 0.2s;
+      }
+      .sb-mic-btn {
+        background: #f4e3fa;
+        color: #7b2685;
+      }
+      .sb-mic-btn.listening {
+        background: #e91e63;
+        color: white;
+        animation: pulse-red 1s infinite;
+      }
+      @keyframes pulse-red {
+        0% { box-shadow: 0 0 0 0 rgba(233, 30, 99, 0.6); }
+        70% { box-shadow: 0 0 0 10px rgba(233, 30, 99, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(233, 30, 99, 0); }
+      }
+      .sb-send-btn {
+        background: linear-gradient(135deg, #a23cad, #e91e63);
+        color: white;
+      }
+      .sb-send-btn:hover {
+        transform: scale(1.05);
+      }
+
+      .sb-tts-btn {
+        display: inline-block;
+        margin-top: 6px;
+        background: rgba(162, 60, 173, 0.08);
+        border: 1px solid rgba(162, 60, 173, 0.2);
+        color: #a23cad;
+        border-radius: 10px;
+        padding: 2px 8px;
+        font-size: 11px;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .sb-tts-btn:hover {
+        background: #a23cad;
+        color: white;
+      }
     </style>
 
-    <button id="soulbot-fab" title="Chat with SoulBot AI">
+    <!-- Floating Bubble Button -->
+    <button id="soulbot-fab" title="Chat with SoulBot AI Counselor">
       <div class="pulse-ring"></div>
-      💬
+      🧠
     </button>
 
+    <!-- Chat Modal Window -->
     <div id="soulbot-modal">
       <div class="sb-header">
         <div class="sb-title">
-          <span>🧠 AI</span> SoulBot Counselor
+          <span>AI Active</span>
+          SoulBot Counselor
         </div>
         <div class="sb-controls">
-          <button id="sb-clear-btn" title="Clear Chat">🧹</button>
+          <button id="sb-settings-toggle" title="AI Model Settings">⚙️</button>
+          <button id="sb-clear-btn" title="Clear Conversation">🧹</button>
           <button id="sb-close-btn" title="Close">✕</button>
         </div>
       </div>
-      
+
+      <!-- Settings Panel -->
+      <div id="sb-settings-panel">
+        <strong>⚡ AI Engine Configuration</strong>
+        <label style="display:block; margin-top:6px; font-size:11px; color:#666;">Provider:</label>
+        <select id="sb-provider-select">
+          <option value="neural">🧠 Built-in Empathetic AI (Zero Setup)</option>
+          <option value="gemini">⚡ Google Gemini 2.0 Flash</option>
+          <option value="openai">🚀 OpenAI GPT-4o-mini</option>
+          <option value="groq">⚡ Groq Llama 3.3 70B</option>
+        </select>
+        <div id="sb-key-container" style="display:none;">
+          <label style="display:block; font-size:11px; color:#666;">API Key:</label>
+          <input type="password" id="sb-api-key" placeholder="Paste your API key here...">
+        </div>
+        <button class="save-btn" id="sb-save-settings">Save & Apply</button>
+      </div>
+
       <div class="sb-chat-body" id="sb-chat-body">
         <div class="sb-msg bot">
-          👋 Hi there, I'm <strong>SoulBot</strong>—your personal AI heartbreak & mental health counselor. 
+          Hello my friend. 🌸 I am <strong>SoulBot</strong>, your 24/7 empathetic counselor on BreakChain AI. 
           <br><br>
-          I'm here to listen without judgment. Whether you're feeling hurt, missing your ex, or struggling with overthinking, tell me everything. 💜
-          <br>
-          <button class="sb-tts-btn" onclick="SoulBotWidget.speak('Hi there, I am SoulBot, your personal AI heartbreak counselor. I am here to listen without judgment.')">🔊 Listen</button>
+          Whether you are feeling the urge to text your ex, dealing with betrayal, or simply need someone to listen without judgment—I am here. How is your heart feeling right now?
         </div>
       </div>
 
-      <div class="sb-chips">
-        <button class="sb-chip" onclick="SoulBotWidget.sendQuick('I miss my ex so much right now')">💔 I miss my ex</button>
-        <button class="sb-chip" onclick="SoulBotWidget.sendQuick('I have a strong urge to text them')">📱 Urge to text</button>
-        <button class="sb-chip" onclick="SoulBotWidget.sendQuick('I feel like crying and I feel so lonely')">😢 Feeling lonely</button>
-        <button class="sb-chip" onclick="SoulBotWidget.sendQuick('Help me stop overthinking what happened')">🌀 Overthinking</button>
-        <button class="sb-chip" onclick="SoulBotWidget.sendQuick('Guide me through a calming exercise')">🧘 Calm exercise</button>
+      <!-- Quick prompts -->
+      <div class="sb-quick-chips">
+        <button class="sb-chip" onclick="window.SoulBotWidget.sendQuick('I miss my ex so much and want to text them')">💔 Urge to text ex</button>
+        <button class="sb-chip" onclick="window.SoulBotWidget.sendQuick('How do I stop blaming myself for the breakup?')">😔 Self-blame</button>
+        <button class="sb-chip" onclick="window.SoulBotWidget.sendQuick('I feel betrayed and full of anger')">😡 Betrayal & Anger</button>
+        <button class="sb-chip" onclick="window.SoulBotWidget.sendQuick('Mujhe bohot akelapan lag raha hai')">🇮🇳 Akelapan</button>
       </div>
 
-      <div class="sb-input-area">
-        <button id="sb-mic-btn" title="Voice Input">🎤</button>
-        <input type="text" id="sb-input" placeholder="Type what's in your heart..." autocomplete="off" />
-        <button id="sb-send-btn" title="Send Message">➤</button>
+      <!-- Input box -->
+      <div class="sb-input-box">
+        <input type="text" id="sb-input" placeholder="Type here or speak in English / Hindi / Hinglish..." autocomplete="off">
+        <button class="sb-btn-icon sb-mic-btn" id="sb-mic-btn" title="Voice Input (Speech-to-Text)">🎤</button>
+        <button class="sb-btn-icon sb-send-btn" id="sb-send-btn" title="Send Message">➤</button>
       </div>
     </div>
   `;
@@ -307,6 +382,34 @@
   const micBtn = document.getElementById('sb-mic-btn');
   const input = document.getElementById('sb-input');
   const chatBody = document.getElementById('sb-chat-body');
+  const settingsToggle = document.getElementById('sb-settings-toggle');
+  const settingsPanel = document.getElementById('sb-settings-panel');
+  const providerSelect = document.getElementById('sb-provider-select');
+  const keyContainer = document.getElementById('sb-key-container');
+  const apiKeyInput = document.getElementById('sb-api-key');
+  const saveSettingsBtn = document.getElementById('sb-save-settings');
+
+  // Load saved settings
+  const savedProvider = localStorage.getItem('breakchain_ai_provider') || 'neural';
+  const savedKey = localStorage.getItem('breakchain_ai_key') || '';
+  providerSelect.value = savedProvider;
+  apiKeyInput.value = savedKey;
+  if (savedProvider !== 'neural') keyContainer.style.display = 'block';
+
+  providerSelect.addEventListener('change', () => {
+    keyContainer.style.display = providerSelect.value === 'neural' ? 'none' : 'block';
+  });
+
+  settingsToggle.addEventListener('click', () => {
+    settingsPanel.style.display = settingsPanel.style.display === 'block' ? 'none' : 'block';
+  });
+
+  saveSettingsBtn.addEventListener('click', () => {
+    localStorage.setItem('breakchain_ai_provider', providerSelect.value);
+    localStorage.setItem('breakchain_ai_key', apiKeyInput.value.trim());
+    settingsPanel.style.display = 'none';
+    appendMessage(`⚙️ AI Engine updated to: <strong>${providerSelect.options[providerSelect.selectedIndex].text}</strong>`, 'bot', true);
+  });
 
   let isListening = false;
   let recognition = null;
@@ -430,20 +533,28 @@
     chatBody.appendChild(typingDiv);
     chatBody.scrollTop = chatBody.scrollHeight;
 
+    const currentProvider = localStorage.getItem('breakchain_ai_provider') || 'neural';
+    const currentKey = localStorage.getItem('breakchain_ai_key') || '';
+
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': currentKey,
+          'x-provider': currentProvider
+        },
         body: JSON.stringify({
           message: text,
-          history: conversationHistory
+          history: conversationHistory,
+          apiKey: currentKey,
+          provider: currentProvider
         })
       });
       const data = await res.json();
       typingDiv.remove();
 
       if (data && data.reply) {
-        // Format markdown bold/bullets simply
         const formatted = data.reply
           .replace(/\n\n/g, '<br><br>')
           .replace(/\n/g, '<br>')
@@ -451,16 +562,19 @@
         appendMessage(formatted, 'bot', true);
         conversationHistory.push({ role: 'assistant', content: data.reply });
       } else {
-        appendMessage("I'm right here with you. Take a deep breath. Can you tell me more?", 'bot');
+        appendMessage("I'm listening closely. Please take a deep breath and tell me more.", 'bot');
       }
     } catch (err) {
       typingDiv.remove();
-      appendMessage("I'm listening to your heart. Remember: you are stronger than this temporary wave of pain. What's on your mind?", 'bot');
+      appendMessage("I'm here with you. Take a slow, deep breath. Let's try once more.", 'bot');
     }
   }
 
   sendBtn.addEventListener('click', sendMessage);
-  input.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') sendMessage();
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
   });
+
 })();

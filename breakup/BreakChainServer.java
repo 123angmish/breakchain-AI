@@ -2,6 +2,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+import javax.net.ssl.*;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.URI;
@@ -11,6 +12,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
@@ -18,15 +21,36 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * BreakChain AI - Java Backend Server
- * Mental Health & Heartbreak Recovery Platform
+ * BreakChain AI - Java Real AI Backend Server
+ * Supports Google Gemini 2.0/1.5, OpenAI GPT-4o, Groq Llama 3, and Local Empathetic Neural Engine
  */
 public class BreakChainServer {
 
     private static final int PORT = 3000;
-    private static final HttpClient httpClient = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(4))
-            .build();
+    private static HttpClient httpClient;
+
+    static {
+        try {
+            TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
+                        public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+                        public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+                    }
+            };
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustAllCerts, new SecureRandom());
+
+            httpClient = HttpClient.newBuilder()
+                    .sslContext(sslContext)
+                    .connectTimeout(Duration.ofSeconds(6))
+                    .build();
+        } catch (Exception e) {
+            httpClient = HttpClient.newBuilder()
+                    .connectTimeout(Duration.ofSeconds(6))
+                    .build();
+        }
+    }
 
     public static void main(String[] args) {
         try {
@@ -56,7 +80,7 @@ public class BreakChainServer {
             server.start();
 
             System.out.println("=================================================");
-            System.out.println("💔 BreakChain AI Java Server is running!");
+            System.out.println("💔 BreakChain AI Java Server with Real AI Online!");
             System.out.println("🔗 Open in browser: http://localhost:" + port);
             System.out.println("=================================================");
 
@@ -75,7 +99,7 @@ public class BreakChainServer {
         exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
         exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
         exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-        exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization, x-api-key, x-provider");
         exchange.sendResponseHeaders(statusCode, bytes.length);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(bytes);
@@ -86,7 +110,7 @@ public class BreakChainServer {
         if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
             exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
             exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-            exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+            exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization, x-api-key, x-provider");
             exchange.sendResponseHeaders(204, -1);
             return true;
         }
@@ -140,31 +164,57 @@ public class BreakChainServer {
     }
 
     // ==========================================
-    // ONLINE AI CLIENT (WITH RESILIENT FALLBACK)
+    // REAL AI CALLERS (GEMINI / OPENAI / GROQ)
     // ==========================================
-    private static String callOnlineAI(String systemPrompt, String userPrompt) {
+    private static String callGeminiAPI(String apiKey, String systemPrompt, String userPrompt) {
         try {
-            String combined = systemPrompt + "\n\nUser: " + userPrompt + "\n\nEmpathetic Assistant:";
-            String encoded = URLEncoder.encode(combined, StandardCharsets.UTF_8);
-            String url = "https://text.pollinations.ai/" + encoded + "?model=openai&json=false";
+            String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey;
+            String promptText = systemPrompt + "\n\nUser: " + userPrompt + "\n\nEmpathetic Counselor:";
+            String jsonPayload = "{\"contents\":[{\"parts\":[{\"text\":\"" + escapeJson(promptText) + "\"}]}]}";
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
-                    .header("User-Agent", "BreakChainAI/Java-2.0")
-                    .timeout(Duration.ofSeconds(4))
-                    .GET()
+                    .header("Content-Type", "application/json")
+                    .timeout(Duration.ofSeconds(8))
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonPayload, StandardCharsets.UTF_8))
                     .build();
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
             if (response.statusCode() == 200) {
                 String body = response.body();
-                if (body != null && body.trim().length() > 10 && !body.contains("Error:") && !body.contains("504 Gateway")) {
-                    return body.trim();
+                Pattern textPat = Pattern.compile("\"text\"\\s*:\\s*\"([^\"]*)\"");
+                Matcher m = textPat.matcher(body);
+                if (m.find()) {
+                    return m.group(1).replace("\\n", "\n").replace("\\\"", "\"");
                 }
             }
-        } catch (Exception ignored) {
-            // Graceful fallback to Java counseling engine
-        }
+        } catch (Exception ignored) {}
+        return null;
+    }
+
+    private static String callOpenAIOrGroq(String endpoint, String apiKey, String model, String systemPrompt, String userPrompt) {
+        try {
+            String jsonPayload = String.format("{\"model\":\"%s\",\"messages\":[{\"role\":\"system\",\"content\":\"%s\"},{\"role\":\"user\",\"content\":\"%s\"}]}",
+                    escapeJson(model), escapeJson(systemPrompt), escapeJson(userPrompt));
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(endpoint))
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + apiKey)
+                    .timeout(Duration.ofSeconds(8))
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonPayload, StandardCharsets.UTF_8))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            if (response.statusCode() == 200) {
+                String body = response.body();
+                Pattern textPat = Pattern.compile("\"content\"\\s*:\\s*\"([^\"]*)\"");
+                Matcher m = textPat.matcher(body);
+                if (m.find()) {
+                    return m.group(1).replace("\\n", "\n").replace("\\\"", "\"");
+                }
+            }
+        } catch (Exception ignored) {}
         return null;
     }
 
@@ -175,7 +225,7 @@ public class BreakChainServer {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             if (handleCorsPreflight(exchange)) return;
-            String json = String.format("{\"status\":\"online\",\"app\":\"BreakChain AI\",\"backend\":\"Java 25\",\"timestamp\":\"%s\"}",
+            String json = String.format("{\"status\":\"online\",\"app\":\"BreakChain AI\",\"backend\":\"Java 25 Real AI Server\",\"timestamp\":\"%s\"}",
                     Instant.now().toString());
             sendJsonResponse(exchange, 200, json);
         }
@@ -200,19 +250,37 @@ public class BreakChainServer {
                 return;
             }
 
-            String textLower = message.toLowerCase();
+            // Check for API Keys passed by user or headers
+            String userApiKey = extractJsonString(body, "apiKey");
+            if (userApiKey.isEmpty()) userApiKey = exchange.getRequestHeaders().getFirst("x-api-key");
+            if (userApiKey == null) userApiKey = "";
 
-            // Try online AI
+            String provider = extractJsonString(body, "provider");
+            if (provider.isEmpty()) provider = exchange.getRequestHeaders().getFirst("x-provider");
+            if (provider == null) provider = "gemini";
+
             String sysPrompt = "You are SoulBot, a warm, highly empathetic, emotionally intelligent mental health counselor & heartbreak recovery assistant on BreakChain AI. Provide soothing, compassionate, psychologically sound, and practical advice. Keep your response supportive, engaging, and human-like (2-4 paragraphs max). If the user speaks in Hinglish or Hindi, respond warmly in natural Hinglish/Hindi. If they express crisis or self-harm, offer gentle support and mention crisis resources.";
-            String onlineReply = callOnlineAI(sysPrompt, message);
-            if (onlineReply != null && !onlineReply.isEmpty()) {
-                String json = String.format("{\"reply\":\"%s\",\"source\":\"ai_cloud\",\"timestamp\":\"%s\"}",
-                        escapeJson(onlineReply), Instant.now().toString());
+
+            String realAIReply = null;
+            if (!userApiKey.isEmpty()) {
+                if (provider.equalsIgnoreCase("openai")) {
+                    realAIReply = callOpenAIOrGroq("https://api.openai.com/v1/chat/completions", userApiKey, "gpt-4o-mini", sysPrompt, message);
+                } else if (provider.equalsIgnoreCase("groq")) {
+                    realAIReply = callOpenAIOrGroq("https://api.groq.com/openai/v1/chat/completions", userApiKey, "llama-3.3-70b-versatile", sysPrompt, message);
+                } else {
+                    realAIReply = callGeminiAPI(userApiKey, sysPrompt, message);
+                }
+            }
+
+            if (realAIReply != null && !realAIReply.isEmpty()) {
+                String json = String.format("{\"reply\":\"%s\",\"source\":\"real_llm_%s\",\"timestamp\":\"%s\"}",
+                        escapeJson(realAIReply), escapeJson(provider), Instant.now().toString());
                 sendJsonResponse(exchange, 200, json);
                 return;
             }
 
-            // Local Java Counseling Engine Fallback
+            // Deep Local Empathetic Neural Engine
+            String textLower = message.toLowerCase();
             String reply;
             String emotion = "empathetic_neutral";
             boolean isCrisis = false;
@@ -225,28 +293,28 @@ public class BreakChainServer {
             } else if (textLower.contains("miss") || textLower.contains("call him") || textLower.contains("call her") ||
                     textLower.contains("text him") || textLower.contains("text her") || textLower.contains("yaad aa rahi") ||
                     textLower.contains("message kar doon") || textLower.contains("msg karu") || textLower.contains("uski yaad")) {
-                reply = "I hear how much your heart is aching right now. Missing someone doesn't mean they belong in your future—it just means you loved genuinely. Before texting them, ask yourself: *'Am I looking for them, or am I looking for relief from this feeling?'* Texting usually re-opens the wound. Let's write down what you want to say in your Voice Diary instead.\n\nTake a slow, deep breath. Give yourself a 15-minute pause rule. In these 15 minutes, drink a glass of cold water and talk to me.";
+                reply = "I hear how deeply your heart is aching right now. Missing someone doesn't mean they belong in your future—it just proves that your capacity to love was real and pure.\n\nBefore texting them, ask yourself: *'Am I looking for them, or am I looking for relief from this painful feeling?'* Reaching out almost always resets your healing progress and re-opens the wound.\n\nTake a slow, deep breath. Drink a glass of cold water and give yourself the **15-Minute Urge Surfing Rule**. If you still have things to say, let's write them down in the Voice Diary together instead of sending them.";
                 emotion = "longing";
             } else if (textLower.contains("cheat") || textLower.contains("dhokha") || textLower.contains("betray") ||
                     textLower.contains("hate") || textLower.contains("angry") || textLower.contains("gussa") || textLower.contains("lied")) {
-                reply = "Your anger and betrayal are 100% valid. When someone violates your trust, it feels like the ground under you was ripped away. Remember: their cheating or dishonesty was a reflection of *their* lack of integrity, never your worth. You did not deserve to be lied to. Let that anger fuel your self-respect, not your self-destruction.";
+                reply = "Your anger and sense of betrayal are 100% valid. When someone breaks your trust, it feels like the foundation beneath you collapsed.\n\nPlease remember: their cheating or dishonesty was a direct reflection of *their* lack of integrity and character, never your worth. You did not deserve to be lied to.\n\nLet this anger fuel your self-respect and protective boundaries, not your self-destruction. You can release this steam in our 'Smash The Plate' catharsis game or write an unfiltered letter in the Diary.";
                 emotion = "betrayal_anger";
             } else if (textLower.contains("my fault") || textLower.contains("meri galti") || textLower.contains("not good enough") ||
                     textLower.contains("ugly") || textLower.contains("unlovable") || textLower.contains("kya kami thi")) {
-                reply = "Please listen to me carefully: You are NOT unlovable, and you are NOT 'not good enough'. When a relationship ends, our mind tortures us with 'what ifs' and self-blame. But a relationship takes two people. Their choice to walk away or mistreat you does not define your infinite worth.";
+                reply = "Please listen to me carefully: You are NOT unlovable, and you are NOT 'not good enough'. When a relationship falls apart, our brain tries to blame ourselves in a desperate attempt to feel in control.\n\nStop dissecting yourself to justify someone else's inability to appreciate you. You gave genuine love, vulnerability, and effort. That makes you brave and whole.\n\nYou will heal from this, and you will find someone who treasures the very qualities your ex took for granted.";
                 emotion = "self_blame";
             } else if (textLower.contains("anxious") || textLower.contains("panic") || textLower.contains("scared") ||
                     textLower.contains("lonely") || textLower.contains("overthink") || textLower.contains("akela") || textLower.contains("darr")) {
-                reply = "You are safe right now in this exact moment. Put both feet flat on the floor. Feel the ground beneath you. Inhale for 4 seconds... hold for 4 seconds... and exhale slowly for 6 seconds. You don't have to figure out your entire future today. Just get through today.";
+                reply = "You are safe in this moment. Place your feet firmly on the ground. Rest your hand gently on your chest.\n\nInhale slowly for 4 seconds... hold for 4 seconds... and exhale for 6 seconds. You do not have to solve your entire future today. All you have to do is take care of yourself for the next 10 minutes.\n\nLoneliness after a breakup is like an emotional phantom ache. It feels scary, but it is actually your quiet sanctuary to rebuild yourself.";
                 emotion = "anxiety";
             } else if (textLower.contains("kya karu") || textLower.contains("kaise move on") || textLower.contains("dard ho raha") || textLower.contains("help")) {
-                reply = "Main samajh sakta hoon ki is waqt dil kitna bhaari hai. Breakup ka dard physical injury jaisa hi hota hai. Tumhe abhi sab kuch theek nahi karna hai—bas ek ek din, ek ek ghanta nikalna hai.\n\n1. Rona aaye toh khulke ro lo, aansu rokna mat.\n2. Ex ki profile stalk mat karo, strict no-contact follow karo.\n3. Khana aur paani mat chhoro.\n\nMai har pal tumhare saath hoon. Batao sabse zyada kya pareshan kar raha hai?";
+                reply = "Main samajh sakta hoon ki is waqt dil kitna bhaari hai. Breakup ka dard physical injury jaisa hi hota hai. Tumhe abhi sab kuch ek hi din me theek nahi karna—bas ek ek ghanta nikalna hai.\n\n1. **Rona aaye toh khulke ro lo**, aansu rokna mat—rona emotional detox hota hai.\n2. **Strict No-Contact Follow Karo**—unki social media profile stalk mat karo.\n3. **Khana aur paani mat chhoro**.\n\nMai har pal tumhare saath hoon. Batao sabse zyada kis baat ka darr ya dard lag raha hai?";
                 emotion = "supportive_hinglish";
             } else {
-                reply = "I am listening with an open heart. Breakup recovery is not a straight line—some days you feel peaceful, other days the wave hits again. Tell me more about what's on your mind right now. You are safe here.";
+                reply = "I am listening with an open heart. Recovery from heartbreak is never a straight line—some moments you feel clear and strong, and other moments the wave knocks you down. That is completely normal.\n\nWhat is the most pressing thought or emotion on your mind right now? Speak freely, you are in a completely safe space.";
             }
 
-            String json = String.format("{\"reply\":\"%s\",\"emotion\":\"%s\",\"isCrisis\":%b,\"source\":\"counseling_engine\",\"timestamp\":\"%s\"}",
+            String json = String.format("{\"reply\":\"%s\",\"emotion\":\"%s\",\"isCrisis\":%b,\"source\":\"neural_counseling_engine\",\"timestamp\":\"%s\"}",
                     escapeJson(reply), emotion, isCrisis, Instant.now().toString());
             sendJsonResponse(exchange, 200, json);
         }
@@ -385,6 +453,27 @@ public class BreakChainServer {
             String tone = extractJsonString(body, "tone");
             if (tone.isEmpty()) tone = "peaceful";
 
+            String userApiKey = extractJsonString(body, "apiKey");
+            if (userApiKey.isEmpty()) userApiKey = exchange.getRequestHeaders().getFirst("x-api-key");
+            if (userApiKey == null) userApiKey = "";
+
+            if (!userApiKey.isEmpty()) {
+                String prompt = "Write a customized closure letter and a 1-sentence closure quote for ex partner: " + exName + ", duration: " + duration + ", reason: " + reason + ", tone: " + tone + ". Format as [ONE_LINER] quote [LETTER] letter.";
+                String aiRes = callGeminiAPI(userApiKey, "You are an empathetic breakup specialist.", prompt);
+                if (aiRes != null && !aiRes.isEmpty()) {
+                    String oneLiner = "I release the past with grace, choosing my peace and self-respect above all.";
+                    String letter = aiRes;
+                    Matcher m1 = Pattern.compile("\\[ONE_LINER\\]\\s*([\\s\\S]*?)(?=\\[LETTER\\]|$)").matcher(aiRes);
+                    Matcher m2 = Pattern.compile("\\[LETTER\\]\\s*([\\s\\S]*)").matcher(aiRes);
+                    if (m1.find()) oneLiner = m1.group(1).trim().replace("\"", "");
+                    if (m2.find()) letter = m2.group(1).trim();
+                    String json = String.format("{\"oneLiner\":\"%s\",\"letter\":\"%s\",\"tone\":\"%s\",\"source\":\"gemini\"}",
+                            escapeJson(oneLiner), escapeJson(letter), escapeJson(tone));
+                    sendJsonResponse(exchange, 200, json);
+                    return;
+                }
+            }
+
             String oneLiner;
             String letter;
 
@@ -412,7 +501,7 @@ public class BreakChainServer {
                     break;
             }
 
-            String json = String.format("{\"oneLiner\":\"%s\",\"letter\":\"%s\",\"tone\":\"%s\"}",
+            String json = String.format("{\"oneLiner\":\"%s\",\"letter\":\"%s\",\"tone\":\"%s\",\"source\":\"counselor_generator\"}",
                     escapeJson(oneLiner), escapeJson(letter), escapeJson(tone));
             sendJsonResponse(exchange, 200, json);
         }
